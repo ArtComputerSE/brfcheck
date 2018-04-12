@@ -1,0 +1,33 @@
+
+body{
+    font-family: 'Source Sans Pro', 'Trebuchet MS', 'Lucida Grande', 'Bitstream Vera Sans', 'Helvetica Neue', sans-serif;
+    font-size: 15pt;
+    margin: 0;
+}
+
+input {
+  font-size: 15pt;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  flex: 1;
+}
+
+.col-left {
+  text-align: right;
+}
+
+.col-center {
+  text-align: right;
+  flex: 1;
+  padding-right: 0.2em;
+}
+
+.col-right {
+  text-align: left;
+}
+
