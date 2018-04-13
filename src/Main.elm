@@ -270,7 +270,8 @@ view model =
 viewCalculator : Model -> Html Msg
 viewCalculator model =
     div []
-        [ div []
+        [ h1 [] [ text "Nyckeltal" ]
+        , div []
             [ inputRow "Summa eget kapital:" UpdateEgetKapital model.parameters.eget_kapital "kr"
             , inputRow "Långfristiga skulder:" UpdateLångfristigaSkulder model.parameters.långfristiga_skulder "kr"
             , inputRow "Andelstal i %:" UpdateAndelstal model.parameters.andelstal "%"
