@@ -31,9 +31,9 @@ viewCalculator model =
         , h1 [] [ text "Utvärdering" ]
         , div []
             [ resultRow "Lägenhetens kostnadsökning vid en räntehöjning om 1%: " (lgh_cost_increase model) "kr/mån"
-            , resultRow "Belåningsgrad:" (eval_belåningsgrad (belåningsgrad model)) ""
-            , resultRow "Lägenhetens andel av skulden, per kvm:" (eval_skuldandel_per_kvm (skuldandel_per_kvm_calc model)) ""
-            , resultRow "Årsavgift per kvm:" (eval_avgift_per_kvm model) ""
+            , evalRow "Belåningsgrad:" (eval_belåningsgrad (belåningsgrad model))
+            , evalRow "Lägenhetens andel av skulden, per kvm:" (eval_skuldandel_per_kvm (skuldandel_per_kvm_calc model))
+            , evalRow "Årsavgift per kvm:" (eval_avgift_per_kvm model)
             ]
         ]
 
@@ -41,11 +41,11 @@ viewCalculator model =
 inputRow : String -> (String -> msg) -> String -> Int -> String -> Html msg
 inputRow label inputMessage currentValue d suffix =
     div [ class "row" ]
-        [ div [ class "cell" ] [ text label ]
+        [ div [ class "col-left" ] [ text label ]
         , div [ class "col-center" ]
             [ input [ onMyBlur inputMessage, value (decimals d (toNumberIfPresentOrZero currentValue)), size 15, step "any" ] []
             ]
-        , div [ class "cell" ] [ text suffix ]
+        , div [ class "col-right" ] [ text suffix ]
         ]
 
 
@@ -59,9 +59,18 @@ targetValue =
     Json.Decode.at [ "target", "value" ] Json.Decode.string
 
 
+resultRow : String -> String -> String -> Html msg
 resultRow label result suffix =
     div [ class "row" ]
-        [ div [ class "cell" ] [ text label ]
+        [ div [ class "col-left" ] [ text label ]
         , div [ class "col-center" ] [ text result ]
-        , div [ class "cell" ] [ text suffix ]
+        , div [ class "col-right" ] [ text suffix ]
+        ]
+
+
+evalRow : String -> String -> Html msg
+evalRow label result =
+    div [ class "row" ]
+        [ div [ class "col-left" ] [ text label ]
+        , div [ class "col-center" ] [ text result ]
         ]
