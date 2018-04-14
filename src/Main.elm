@@ -71,7 +71,7 @@ parametersFromString string =
         list =
             Debug.log "list" (String.split ":" string)
     in
-    Parameters (pick 1 list) (pick 2 list) (pick 3 list) (pick 4 list) (pick 5 list)
+    Parameters (pick 1 list) (pick 2 list) (pick 3 list) (pick 4 list) (pick 5 list) (pick 6 list)
 
 
 pick : Int -> List String -> String
@@ -104,6 +104,7 @@ parametersToString parameters =
         , parameters.andelstal
         , parameters.lägenhetsyta
         , parameters.månadsavgift
+        , parameters.beteckning
         ]
 
 
@@ -146,6 +147,9 @@ update msg model =
 
         Msg.UpdateMånadsavgift ny_månadsavgift ->
             ( { model | parameters = { params | månadsavgift = ny_månadsavgift } }, Cmd.none )
+
+        Msg.UpdateBeteckning ny_beteckning ->
+            ( { model | parameters = { params | beteckning = ny_beteckning } }, Cmd.none )
 
         Msg.FollowRoute route ->
             ( { model | route = route }, Cmd.none )

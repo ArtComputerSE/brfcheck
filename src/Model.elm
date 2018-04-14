@@ -15,6 +15,7 @@ type alias Parameters =
     , andelstal : String
     , lägenhetsyta : String
     , månadsavgift : String
+    , beteckning : String
     }
 
 
@@ -25,6 +26,7 @@ defaultParameters =
     , andelstal = "0"
     , lägenhetsyta = "0"
     , månadsavgift = "0"
+    , beteckning = ""
     }
 
 

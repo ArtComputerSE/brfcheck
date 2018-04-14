@@ -1,9 +1,9 @@
 module ViewCalculator exposing (viewCalculator)
 
 import Calculator exposing (belåningsgrad, brf_cost_increase, eval_avgift_per_kvm, eval_belåningsgrad, eval_skuldandel_per_kvm, lgh_cost_increase, skuldandel, skuldandel_per_kvm, skuldandel_per_kvm_calc)
-import Html exposing (Html, div, h1, input, text)
+import Html exposing (Html, div, h1, input, p, text)
 import Html.Attributes exposing (class, size, step, type_, value)
-import Html.Events exposing (on)
+import Html.Events exposing (on, onInput)
 import Json.Decode
 import Model exposing (..)
 import Msg exposing (Msg)
@@ -13,7 +13,16 @@ import StringUtil exposing (decimals, toNumberIfPresentOrZero, twoDecimal)
 viewCalculator : Model -> Html Msg
 viewCalculator model =
     div []
-        [ h1 [] [ text "Nyckeltal" ]
+        [ p []
+            [ text "Beteckning: "
+            , input [ class "name-input", onInput Msg.UpdateBeteckning, value model.parameters.beteckning ]
+                []
+            , input [ class "save-button", type_ "button", value "Spara" ]
+                []
+            ]
+        , h1
+            []
+            [ text "Nyckeltal" ]
         , div []
             [ inputRow "Summa eget kapital:" Msg.UpdateEgetKapital model.parameters.eget_kapital 2 "kr"
             , inputRow "Långfristiga skulder:" Msg.UpdateLångfristigaSkulder model.parameters.långfristiga_skulder 2 "kr"

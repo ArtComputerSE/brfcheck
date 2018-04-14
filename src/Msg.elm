@@ -9,4 +9,5 @@ type Msg
     | UpdateAndelstal String
     | UpdateLägenhetsyta String
     | UpdateMånadsavgift String
+    | UpdateBeteckning String
     | FollowRoute Route

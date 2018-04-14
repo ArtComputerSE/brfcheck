@@ -57,3 +57,10 @@ input {
     flex: 1;
 }
 
+.name-input {
+    border-bottom-width: 5px;
+}
+
+.save-button {
+    background-color: greenyellow;
+}
