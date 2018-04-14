@@ -180,16 +180,13 @@ update msg model =
 setCurrent : Int -> Model -> Model
 setCurrent index model =
     let
-        this =
-            model.parameters
-
         newCurrent =
             pick index defaultParameters model.saved
 
         newSaved =
-            List.append (List.take (index - 1) model.saved) (List.drop (index + 1) model.saved)
+            List.append (List.take index model.saved) (List.drop (index + 1) model.saved)
     in
-    Model Model.HomeRoute newCurrent (newCurrent :: this :: newSaved)
+    Model Model.HomeRoute newCurrent (newCurrent :: newSaved)
 
 
 
