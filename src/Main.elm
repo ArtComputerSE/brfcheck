@@ -2,11 +2,14 @@ port module Main exposing (..)
 
 import Html exposing (Html, div, h1, input, label, p, table, tbody, td, text, tr)
 import Html.Attributes exposing (class, size, step, type_, value)
+import Html.Events exposing (onClick)
 import Model exposing (Model, Parameters, Route, defaultParameters)
 import Msg exposing (Msg)
 import Navigation
 import UrlParser exposing ((</>))
+import ViewBrfList exposing (viewBrfList)
 import ViewCalculator exposing (viewCalculator)
+import ViewInfoPage exposing (viewInfo)
 
 
 main : Program (Maybe String) Model Msg
@@ -210,11 +213,11 @@ view model =
 viewHeader : Html Msg
 viewHeader =
     div [ class "row" ]
-        [ div [ class "menu-left" ]
+        [ div [ class "menu-left", onClick (Msg.FollowRoute Model.HomeRoute) ]
             [ text "C" ]
-        , div [ class "menu-center" ]
+        , div [ class "menu-center", onClick (Msg.FollowRoute Model.BrfListRoute) ]
             [ text "L" ]
-        , div [ class "menu-right" ]
+        , div [ class "menu-right", onClick (Msg.FollowRoute Model.InfoRoute) ]
             [ text "I" ]
         ]
 
@@ -224,6 +227,12 @@ viewPage model =
     case model.route of
         Model.HomeRoute ->
             viewCalculator model
+
+        Model.BrfListRoute ->
+            viewBrfList model
+
+        Model.InfoRoute ->
+            viewInfo
 
         Model.AddBrfRoute s ->
             notImplementedYetPage model s

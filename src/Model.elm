@@ -38,5 +38,7 @@ type alias CodedBrfRecord =
 
 type Route
     = HomeRoute
+    | BrfListRoute
+    | InfoRoute
     | AddBrfRoute CodedBrfRecord
     | NotFound
