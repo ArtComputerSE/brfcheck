@@ -12,4 +12,5 @@ type Msg
     | UpdateBeteckning String
     | Spara
     | SetCurrent Int
+    | RemoveObject Int
     | FollowRoute Route

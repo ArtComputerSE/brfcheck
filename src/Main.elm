@@ -173,6 +173,9 @@ update msg model =
         Msg.SetCurrent index ->
             ( setCurrent index model, Cmd.none )
 
+        Msg.RemoveObject index ->
+            ( { model | saved = removeFromList index model.saved }, Cmd.none )
+
         Msg.FollowRoute route ->
             ( { model | route = route }, Cmd.none )
 
@@ -184,9 +187,14 @@ setCurrent index model =
             pick index defaultParameters model.saved
 
         newSaved =
-            List.append (List.take index model.saved) (List.drop (index + 1) model.saved)
+            removeFromList index model.saved
     in
     Model Model.HomeRoute newCurrent (newCurrent :: newSaved)
+
+
+removeFromList : Int -> List a -> List a
+removeFromList index list =
+    List.append (List.take index list) (List.drop (index + 1) list)
 
 
 

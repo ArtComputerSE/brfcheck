@@ -51,6 +51,11 @@ input {
     flex: 1;
 }
 
+.clickable {
+    border-style: outset;
+    text-align: center;
+}
+
 .name-input {
     border-bottom-width: 5px;
 }
