@@ -6,6 +6,7 @@ module Model exposing (..)
 type alias Model =
     { route : Route
     , parameters : Parameters
+    , saved : List Parameters
     }
 
 

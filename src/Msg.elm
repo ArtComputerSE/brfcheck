@@ -10,4 +10,6 @@ type Msg
     | UpdateLägenhetsyta String
     | UpdateMånadsavgift String
     | UpdateBeteckning String
+    | Spara
+    | SetCurrent Int
     | FollowRoute Route

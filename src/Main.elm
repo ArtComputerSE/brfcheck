@@ -32,14 +32,23 @@ port setStorage : String -> Cmd msg
 port removeStorage : String -> Cmd msg
 
 
-initialModel : Route -> Parameters -> Model
+initialModel : Route -> List Parameters -> Model
 initialModel route parameters =
     let
         p =
             Debug.log "Parameters " (toString parameters)
+
+        current =
+            case List.head parameters of
+                Nothing ->
+                    defaultParameters
+
+                Just p ->
+                    p
     in
     { route = route
-    , parameters = parameters
+    , parameters = current
+    , saved = parameters
     }
 
 
@@ -59,10 +68,32 @@ init maybeString location =
     in
     case Debug.log "Maybe stored string" maybeString of
         Just something ->
-            ( initialModel route (parametersFromString something), Cmd.none )
+            ( initialModel route (restore something), Cmd.none )
 
         Nothing ->
-            ( initialModel route defaultParameters, Cmd.none )
+            ( initialModel route [ defaultParameters ], Cmd.none )
+
+
+restore : String -> List Parameters
+restore encoded =
+    let
+        e =
+            Debug.log "Restoring " encoded
+    in
+    String.split "|" encoded |> List.map parametersFromString
+
+
+store : Parameters -> List Parameters -> String
+store current list =
+    let
+        x =
+            Debug.log "Store "
+                (toString list)
+
+        saved =
+            Maybe.withDefault [] (List.tail list)
+    in
+    List.map parametersToString (current :: saved) |> String.join "|"
 
 
 parametersFromString : String -> Parameters
@@ -71,25 +102,20 @@ parametersFromString string =
         list =
             Debug.log "list" (String.split ":" string)
     in
-    Parameters (pick 1 list) (pick 2 list) (pick 3 list) (pick 4 list) (pick 5 list) (pick 6 list)
+    Parameters (pick 0 "" list) (pick 1 "" list) (pick 2 "" list) (pick 3 "" list) (pick 4 "" list) (pick 5 "" list)
 
 
-pick : Int -> List String -> String
-pick n list =
-    if n == 1 then
-        case List.head list of
-            Just head ->
-                head
-
-            Nothing ->
-                ""
+pick : Int -> s -> List s -> s
+pick n def list =
+    if n == 0 then
+        Maybe.withDefault def (List.head list)
     else
         case List.tail list of
             Just tail ->
-                pick (n - 1) tail
+                pick (n - 1) def tail
 
             Nothing ->
-                ""
+                def
 
 
 parametersToString : Parameters -> String
@@ -122,7 +148,7 @@ updateWithStorage msg model =
             newModel.parameters
     in
     ( newModel
-    , Cmd.batch [ commands, setStorage (parametersToString newParameters) ]
+    , Cmd.batch [ commands, setStorage (store newParameters model.saved) ]
     )
 
 
@@ -151,8 +177,29 @@ update msg model =
         Msg.UpdateBeteckning ny_beteckning ->
             ( { model | parameters = { params | beteckning = ny_beteckning } }, Cmd.none )
 
+        Msg.Spara ->
+            ( { model | saved = params :: model.saved }, Cmd.none )
+
+        Msg.SetCurrent index ->
+            ( setCurrent index model, Cmd.none )
+
         Msg.FollowRoute route ->
             ( { model | route = route }, Cmd.none )
+
+
+setCurrent : Int -> Model -> Model
+setCurrent index model =
+    let
+        this =
+            model.parameters
+
+        newCurrent =
+            pick index defaultParameters model.saved
+
+        newSaved =
+            List.append (List.take (index - 1) model.saved) (List.drop (index + 1) model.saved)
+    in
+    Model model.route newCurrent (newCurrent :: this :: newSaved)
 
 
 
@@ -208,7 +255,7 @@ routeParser =
 
 view : Model -> Html Msg
 view model =
-    div [ class "overflow-container" ]
+    div [ class "container" ]
         [ viewHeader
         , viewPage model
         ]
