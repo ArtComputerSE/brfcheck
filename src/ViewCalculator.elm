@@ -7,7 +7,7 @@ import Html.Events exposing (on)
 import Json.Decode
 import Model exposing (..)
 import Msg exposing (Msg)
-import StringUtil exposing (toNumberIfPresentOrZero, twoDecimal)
+import StringUtil exposing (decimals, toNumberIfPresentOrZero, twoDecimal)
 
 
 viewCalculator : Model -> Html Msg
@@ -15,11 +15,11 @@ viewCalculator model =
     div []
         [ h1 [] [ text "Nyckeltal" ]
         , div []
-            [ inputRow "Summa eget kapital:" Msg.UpdateEgetKapital model.parameters.eget_kapital "kr"
-            , inputRow "Långfristiga skulder:" Msg.UpdateLångfristigaSkulder model.parameters.långfristiga_skulder "kr"
-            , inputRow "Andelstal i %:" Msg.UpdateAndelstal model.parameters.andelstal "%"
-            , inputRow "Lägenhetsyta:" Msg.UpdateLägenhetsyta model.parameters.lägenhetsyta "kvm"
-            , inputRow "Månadsavgift:" Msg.UpdateMånadsavgift model.parameters.månadsavgift "kr/mån"
+            [ inputRow "Summa eget kapital:" Msg.UpdateEgetKapital model.parameters.eget_kapital 2 "kr"
+            , inputRow "Långfristiga skulder:" Msg.UpdateLångfristigaSkulder model.parameters.långfristiga_skulder 2 "kr"
+            , inputRow "Andelstal i %:" Msg.UpdateAndelstal model.parameters.andelstal 3 "%"
+            , inputRow "Lägenhetsyta:" Msg.UpdateLägenhetsyta model.parameters.lägenhetsyta 0 "kvm"
+            , inputRow "Månadsavgift:" Msg.UpdateMånadsavgift model.parameters.månadsavgift 2 "kr/mån"
             ]
         , h1 [] [ text "Analys" ]
         , div []
@@ -38,12 +38,12 @@ viewCalculator model =
         ]
 
 
-inputRow : String -> (String -> msg) -> String -> String -> Html msg
-inputRow label inputMessage currentValue suffix =
+inputRow : String -> (String -> msg) -> String -> Int -> String -> Html msg
+inputRow label inputMessage currentValue d suffix =
     div [ class "row" ]
         [ div [ class "cell" ] [ text label ]
         , div [ class "col-center" ]
-            [ input [ onMyBlur inputMessage, value (twoDecimal (toNumberIfPresentOrZero currentValue)), size 15, step "any" ] []
+            [ input [ onMyBlur inputMessage, value (decimals d (toNumberIfPresentOrZero currentValue)), size 15, step "any" ] []
             ]
         , div [ class "cell" ] [ text suffix ]
         ]

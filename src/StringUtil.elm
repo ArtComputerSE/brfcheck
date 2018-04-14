@@ -24,4 +24,9 @@ removeSpace string =
 
 twoDecimal : Float -> String
 twoDecimal n =
-    format { decimals = 2, thousandSeparator = " ", decimalSeparator = ",", negativePrefix = "−", negativeSuffix = "" } n
+    decimals 2 n
+
+
+decimals : Int -> Float -> String
+decimals d n =
+    format { decimals = d, thousandSeparator = " ", decimalSeparator = ",", negativePrefix = "−", negativeSuffix = "" } n
