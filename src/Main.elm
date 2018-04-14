@@ -255,16 +255,34 @@ routeParser =
 view : Model -> Html Msg
 view model =
     div [ class "overflow-container" ]
-        [ case model.route of
-            HomeRoute ->
-                viewCalculator model
-
-            AddBrfRoute s ->
-                notImplementedYetPage model s
-
-            NotFound ->
-                notFoundPage model
+        [ viewHeader
+        , viewPage model
         ]
+
+
+viewHeader : Html Msg
+viewHeader =
+    div [ class "row" ]
+        [ div [ class "menu-left" ]
+            [ text "C" ]
+        , div [ class "menu-center" ]
+            [ text "L" ]
+        , div [ class "menu-right" ]
+            [ text "I" ]
+        ]
+
+
+viewPage : Model -> Html Msg
+viewPage model =
+    case model.route of
+        HomeRoute ->
+            viewCalculator model
+
+        AddBrfRoute s ->
+            notImplementedYetPage model s
+
+        NotFound ->
+            notFoundPage model
 
 
 viewCalculator : Model -> Html Msg

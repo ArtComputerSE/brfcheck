@@ -2,6 +2,7 @@
 body{
     font-family: 'Source Sans Pro', 'Trebuchet MS', 'Lucida Grande', 'Bitstream Vera Sans', 'Helvetica Neue', sans-serif;
     font-size: 15pt;
+    width: 100%;
 }
 
 input {
@@ -14,6 +15,30 @@ input {
 
 .cell {
   flex: 1;
+}
+
+.menu-left {
+    flex: 1;
+    background-color: black;
+    color: white;
+    border-bottom-style: double;
+    border-right-style: double;
+}
+
+.menu-center {
+    flex: 1;
+    background-color: black;
+    color: white;
+    border-bottom-style: double;
+    border-right-style: double;
+}
+
+.menu-right {
+    flex: 1;
+    background-color: black;
+    color: white;
+    border-bottom-style: double;
+
 }
 
 .col-left {
