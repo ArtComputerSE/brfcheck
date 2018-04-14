@@ -19,7 +19,7 @@ viewInfo =
             [ text
                 ("Denna app är baserad på en artikel i DN och räknar ut nyckeltal för en BRF baserat "
                     ++ "på de uppgifter som du ska ha fått av mäklaren."
-                    ++ "Utifrån nyckeltalen så gör appen en utvärdering, även den baserad på artikeln."
+                    ++ "Utifrån nyckeltalen så gör appen en utvärdering, även den baserad på artikeln. "
                 )
             , a
                 [ href "https://www.dn.se/ekonomi/din-ekonomi/sa-far-du-koll-pa-ekonomin-i-bostadsrattsforeningen/" ]
