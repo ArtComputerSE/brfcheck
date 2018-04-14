@@ -39,12 +39,7 @@ initialModel route parameters =
             Debug.log "Parameters " (toString parameters)
 
         current =
-            case List.head parameters of
-                Nothing ->
-                    defaultParameters
-
-                Just p ->
-                    p
+            Maybe.withDefault defaultParameters (List.head parameters)
     in
     { route = route
     , parameters = current
@@ -59,12 +54,7 @@ init maybeString location =
             Debug.log "init location" location
 
         route =
-            case UrlParser.parsePath routeParser location of
-                Nothing ->
-                    Model.HomeRoute
-
-                Just route ->
-                    route
+            Maybe.withDefault Model.HomeRoute (UrlParser.parsePath routeParser location)
     in
     case Debug.log "Maybe stored string" maybeString of
         Just something ->
