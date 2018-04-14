@@ -1,8 +1,7 @@
 port module Main exposing (..)
 
 import Html exposing (Html, div, h1, input, label, p, table, tbody, td, text, tr)
-import Html.Attributes exposing (class, size, step, type_, value)
-import Html.Events exposing (onClick)
+import Html.Attributes exposing (class)
 import Model exposing (Model, Parameters, Route, defaultParameters)
 import Msg exposing (Msg)
 import Navigation

@@ -1,7 +1,7 @@
 module ViewHeader exposing (..)
 
-import Html exposing (Html, div, text)
-import Html.Attributes exposing (class)
+import Html exposing (Html, div, img, text)
+import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick)
 import Model exposing (Model)
 import Msg exposing (Msg)
@@ -10,10 +10,10 @@ import Msg exposing (Msg)
 viewHeader : Html Msg
 viewHeader =
     div [ class "row" ]
-        [ div [ class "menu-left", onClick (Msg.FollowRoute Model.HomeRoute) ]
-            [ text "C" ]
-        , div [ class "menu-center", onClick (Msg.FollowRoute Model.BrfListRoute) ]
-            [ text "L" ]
-        , div [ class "menu-right", onClick (Msg.FollowRoute Model.InfoRoute) ]
-            [ text "I" ]
+        [ div [ class "menu", onClick (Msg.FollowRoute Model.HomeRoute) ]
+            [ img [ src "calculator.png" ] [] ]
+        , div [ class "menu", onClick (Msg.FollowRoute Model.BrfListRoute) ]
+            [ img [ src "brflist.png" ] [] ]
+        , div [ class "menu", onClick (Msg.FollowRoute Model.InfoRoute) ]
+            [ img [ src "info.png" ] [] ]
         ]
