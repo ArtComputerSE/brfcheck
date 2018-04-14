@@ -189,7 +189,7 @@ setCurrent index model =
         newSaved =
             List.append (List.take (index - 1) model.saved) (List.drop (index + 1) model.saved)
     in
-    Model model.route newCurrent (newCurrent :: this :: newSaved)
+    Model Model.HomeRoute newCurrent (newCurrent :: this :: newSaved)
 
 
 
