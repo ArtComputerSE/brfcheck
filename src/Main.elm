@@ -1,13 +1,12 @@
 port module Main exposing (..)
 
-import FormatNumber exposing (format)
 import Html exposing (Html, div, h1, input, label, p, table, tbody, td, text, tr)
 import Html.Attributes exposing (class, size, step, type_, value)
-import Html.Events exposing (on, onInput)
-import Json.Decode
+import Model exposing (Model, Parameters, Route, defaultParameters)
+import Msg exposing (Msg)
 import Navigation
-import Regex
 import UrlParser exposing ((</>))
+import ViewCalculator exposing (viewCalculator)
 
 
 main : Program (Maybe String) Model Msg
@@ -30,35 +29,6 @@ port setStorage : String -> Cmd msg
 port removeStorage : String -> Cmd msg
 
 
-
--- MODEL
-
-
-type alias Model =
-    { route : Route
-    , parameters : Parameters
-    }
-
-
-type alias Parameters =
-    { eget_kapital : String
-    , långfristiga_skulder : String
-    , andelstal : String
-    , lägenhetsyta : String
-    , månadsavgift : String
-    }
-
-
-defaultParameters : Parameters
-defaultParameters =
-    { eget_kapital = "0"
-    , långfristiga_skulder = "0"
-    , andelstal = "0"
-    , lägenhetsyta = "0"
-    , månadsavgift = "0"
-    }
-
-
 initialModel : Route -> Parameters -> Model
 initialModel route parameters =
     let
@@ -79,7 +49,7 @@ init maybeString location =
         route =
             case UrlParser.parsePath routeParser location of
                 Nothing ->
-                    HomeRoute
+                    Model.HomeRoute
 
                 Just route ->
                     route
@@ -135,30 +105,7 @@ parametersToString parameters =
 
 
 
--- ROUTES
-
-
-type alias CodedBrfRecord =
-    String
-
-
-type Route
-    = HomeRoute
-    | AddBrfRoute CodedBrfRecord
-    | NotFound
-
-
-
 -- UPDATE
-
-
-type Msg
-    = UpdateEgetKapital String
-    | UpdateLångfristigaSkulder String
-    | UpdateAndelstal String
-    | UpdateLägenhetsyta String
-    | UpdateMånadsavgift String
-    | FollowRoute Route
 
 
 updateWithStorage : Msg -> Model -> ( Model, Cmd Msg )
@@ -182,22 +129,22 @@ update msg model =
             model.parameters
     in
     case msg of
-        UpdateEgetKapital nytt_eget_kapital ->
+        Msg.UpdateEgetKapital nytt_eget_kapital ->
             ( { model | parameters = { params | eget_kapital = nytt_eget_kapital } }, Cmd.none )
 
-        UpdateLångfristigaSkulder nytt_långfristiga_skulder ->
+        Msg.UpdateLångfristigaSkulder nytt_långfristiga_skulder ->
             ( { model | parameters = { params | långfristiga_skulder = nytt_långfristiga_skulder } }, Cmd.none )
 
-        UpdateAndelstal nytt_andelstal ->
+        Msg.UpdateAndelstal nytt_andelstal ->
             ( { model | parameters = { params | andelstal = nytt_andelstal } }, Cmd.none )
 
-        UpdateLägenhetsyta ny_lägenhetsyta ->
+        Msg.UpdateLägenhetsyta ny_lägenhetsyta ->
             ( { model | parameters = { params | lägenhetsyta = ny_lägenhetsyta } }, Cmd.none )
 
-        UpdateMånadsavgift ny_månadsavgift ->
+        Msg.UpdateMånadsavgift ny_månadsavgift ->
             ( { model | parameters = { params | månadsavgift = ny_månadsavgift } }, Cmd.none )
 
-        FollowRoute route ->
+        Msg.FollowRoute route ->
             ( { model | route = route }, Cmd.none )
 
 
@@ -216,10 +163,10 @@ urlParser location =
     in
     case Debug.log "parsed" parsed of
         Nothing ->
-            FollowRoute NotFound
+            Msg.FollowRoute Model.NotFound
 
         Just route ->
-            FollowRoute route
+            Msg.FollowRoute route
 
 
 postsParser : UrlParser.Parser a a
@@ -227,7 +174,7 @@ postsParser =
     UrlParser.s "posts"
 
 
-addBrfParser : UrlParser.Parser (CodedBrfRecord -> a) a
+addBrfParser : UrlParser.Parser (Model.CodedBrfRecord -> a) a
 addBrfParser =
     UrlParser.s "add" </> UrlParser.string
 
@@ -243,8 +190,8 @@ homeParser =
 routeParser : UrlParser.Parser (Route -> a) a
 routeParser =
     UrlParser.oneOf
-        [ UrlParser.map AddBrfRoute addBrfParser
-        , UrlParser.map HomeRoute homeParser
+        [ UrlParser.map Model.AddBrfRoute addBrfParser
+        , UrlParser.map Model.HomeRoute homeParser
         ]
 
 
@@ -275,70 +222,14 @@ viewHeader =
 viewPage : Model -> Html Msg
 viewPage model =
     case model.route of
-        HomeRoute ->
+        Model.HomeRoute ->
             viewCalculator model
 
-        AddBrfRoute s ->
+        Model.AddBrfRoute s ->
             notImplementedYetPage model s
 
-        NotFound ->
+        Model.NotFound ->
             notFoundPage model
-
-
-viewCalculator : Model -> Html Msg
-viewCalculator model =
-    div []
-        [ h1 [] [ text "Nyckeltal" ]
-        , div []
-            [ inputRow "Summa eget kapital:" UpdateEgetKapital model.parameters.eget_kapital "kr"
-            , inputRow "Långfristiga skulder:" UpdateLångfristigaSkulder model.parameters.långfristiga_skulder "kr"
-            , inputRow "Andelstal i %:" UpdateAndelstal model.parameters.andelstal "%"
-            , inputRow "Lägenhetsyta:" UpdateLägenhetsyta model.parameters.lägenhetsyta "kvm"
-            , inputRow "Månadsavgift:" UpdateMånadsavgift model.parameters.månadsavgift "kr/mån"
-            ]
-        , h1 [] [ text "Analys" ]
-        , div []
-            [ resultRow "Fastighetens belåningsgrad: " (belåningsgrad model) "%"
-            , resultRow "Lägenhetens del av skulden: " (skuldandel model) " kr"
-            , resultRow "Lägenhetens del av skulden per kvadratmeter: " (skuldandel_per_kvm model) "kr"
-            , resultRow "Föreningens kostnadsökning vid 1% räntehöjning: " (brf_cost_increase model) "kr/mån"
-            ]
-        , h1 [] [ text "Utvärdering" ]
-        , div []
-            [ resultRow "Lägenhetens kostnadsökning vid en räntehöjning om 1%: " (lgh_cost_increase model) "kr/mån"
-            , resultRow "Belåningsgrad:" (eval_belåningsgrad (belåningsgrad model)) ""
-            , resultRow "Lägenhetens andel av skulden, per kvm:" (eval_skuldandel_per_kvm (skuldandel_per_kvm_calc model)) ""
-            , resultRow "Årsavgift per kvm:" (eval_avgift_per_kvm model) ""
-            ]
-        ]
-
-
-inputRow label inputMessage currentValue suffix =
-    div [ class "row" ]
-        [ div [ class "cell" ] [ text label ]
-        , div [ class "col-center" ]
-            [ input [ onMyBlur inputMessage, value (twoDecimal (toNumberIfPresentOrZero currentValue)), size 15, step "any" ] []
-            ]
-        , div [ class "cell" ] [ text suffix ]
-        ]
-
-
-onMyBlur : (String -> msg) -> Html.Attribute msg
-onMyBlur tagger =
-    on "blur" (Json.Decode.map tagger targetValue)
-
-
-targetValue : Json.Decode.Decoder String
-targetValue =
-    Json.Decode.at [ "target", "value" ] Json.Decode.string
-
-
-resultRow label result suffix =
-    div [ class "row" ]
-        [ div [ class "cell" ] [ text label ]
-        , div [ class "col-center" ] [ text result ]
-        , div [ class "cell" ] [ text suffix ]
-        ]
 
 
 notImplementedYetPage : Model -> String -> Html Msg
@@ -349,161 +240,6 @@ notImplementedYetPage model code =
 notFoundPage : Model -> Html Msg
 notFoundPage model =
     div [] [ text "Not found" ]
-
-
-
--- Calculations
-
-
-belåningsgrad : Model -> String
-belåningsgrad model =
-    let
-        kapital =
-            toNumberIfPresentOrZero model.parameters.eget_kapital
-
-        skulder =
-            toNumberIfPresentOrZero model.parameters.långfristiga_skulder
-
-        summa =
-            kapital + skulder
-    in
-    if summa == 0 then
-        ""
-    else
-        twoDecimal ((skulder / summa) * 100)
-
-
-skuldandel : Model -> String
-skuldandel model =
-    let
-        skulder =
-            toNumberIfPresentOrZero model.parameters.långfristiga_skulder
-
-        andel =
-            toNumberIfPresentOrZero model.parameters.andelstal
-    in
-    if skulder == 0 || andel == 0 then
-        ""
-    else
-        twoDecimal (skulder * andel / 100)
-
-
-skuldandel_per_kvm : Model -> String
-skuldandel_per_kvm model =
-    twoDecimal (skuldandel_per_kvm_calc model)
-
-
-skuldandel_per_kvm_calc : Model -> Float
-skuldandel_per_kvm_calc model =
-    let
-        skulder =
-            toNumberIfPresentOrZero model.parameters.långfristiga_skulder
-
-        andel =
-            toNumberIfPresentOrZero model.parameters.andelstal
-
-        yta =
-            toNumberIfPresentOrZero model.parameters.lägenhetsyta
-    in
-    if skulder == 0 || andel == 0 then
-        0.0
-    else if yta == 0 then
-        0.0
-    else
-        (skulder * andel / 100) / yta
-
-
-brf_cost_increase : Model -> String
-brf_cost_increase model =
-    twoDecimal (brf_cost_increase_calc model)
-
-
-brf_cost_increase_calc : Model -> Float
-brf_cost_increase_calc model =
-    toNumberIfPresentOrZero model.parameters.långfristiga_skulder * 0.01 / 12
-
-
-lgh_cost_increase : Model -> String
-lgh_cost_increase model =
-    twoDecimal (toNumberIfPresentOrZero model.parameters.andelstal * 0.01 * brf_cost_increase_calc model)
-
-
-
--- Evaluations
-
-
-eval_belåningsgrad : String -> String
-eval_belåningsgrad fastighetBelåningString =
-    let
-        fastighetsBelåningsgrad =
-            toNumberIfPresentOrZero fastighetBelåningString
-    in
-    if fastighetsBelåningsgrad <= 25 then
-        "OK, mindre än 25%."
-    else if fastighetsBelåningsgrad <= 50 then
-        "Gränsfall, 25-50%."
-    else
-        "Se upp! Över 50%."
-
-
-eval_skuldandel_per_kvm : Float -> String
-eval_skuldandel_per_kvm spkvm =
-    if spkvm >= 9000 then
-        "Hög, över 9000 kr."
-    else if spkvm >= 6000 then
-        "Måttlig till hög, 6000 - 9000 kr."
-    else if spkvm > 3000 then
-        "Måttlig till låg, 3000 - 6000 kr."
-    else
-        "Låg, under 3000 kr."
-
-
-eval_avgift_per_kvm model =
-    let
-        monthly =
-            toNumberIfPresentOrZero model.parameters.månadsavgift
-
-        yta =
-            toNumberIfPresentOrZero model.parameters.lägenhetsyta
-
-        avgift =
-            if yta > 0 then
-                monthly * 12 / yta
-            else
-                0
-    in
-    if avgift >= 900 then
-        "Hög, över 900 kr"
-    else if avgift >= 650 then
-        "Måttlig till hög, 650 - 900 kr."
-    else if avgift > 300 then
-        "Måttlig till låg, 300 - 650 kr."
-    else
-        "Låg, under 300 kr."
-
-
-
--- String conversions
-
-
-toNumberIfPresentOrZero : String -> Float
-toNumberIfPresentOrZero string =
-    Result.withDefault 0 (String.toFloat (removeSpace (replaceDecimalSeparator string)))
-
-
-replaceDecimalSeparator : String -> String
-replaceDecimalSeparator string =
-    Regex.replace Regex.All (Regex.regex ",") (\_ -> ".") string
-
-
-removeSpace : String -> String
-removeSpace string =
-    Regex.replace Regex.All (Regex.regex " ") (\_ -> "") string
-
-
-twoDecimal : Float -> String
-twoDecimal n =
-    format { decimals = 2, thousandSeparator = " ", decimalSeparator = ",", negativePrefix = "−", negativeSuffix = "" } n
 
 
 
