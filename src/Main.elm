@@ -9,6 +9,7 @@ import Navigation
 import UrlParser exposing ((</>))
 import ViewBrfList exposing (viewBrfList)
 import ViewCalculator exposing (viewCalculator)
+import ViewHeader exposing (viewHeader)
 import ViewInfoPage exposing (viewInfo)
 
 
@@ -211,18 +212,6 @@ view model =
     div [ class "overflow-container" ]
         [ viewHeader
         , viewPage model
-        ]
-
-
-viewHeader : Html Msg
-viewHeader =
-    div [ class "row" ]
-        [ div [ class "menu-left", onClick (Msg.FollowRoute Model.HomeRoute) ]
-            [ text "C" ]
-        , div [ class "menu-center", onClick (Msg.FollowRoute Model.BrfListRoute) ]
-            [ text "L" ]
-        , div [ class "menu-right", onClick (Msg.FollowRoute Model.InfoRoute) ]
-            [ text "I" ]
         ]
 
 
