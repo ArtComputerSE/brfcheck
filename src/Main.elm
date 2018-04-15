@@ -70,7 +70,7 @@ restore encoded =
         e =
             Debug.log "Restoring " encoded
     in
-    String.split "|" encoded |> List.map parametersFromString
+    String.split parameterListSplitter encoded |> List.map parametersFromString
 
 
 store : Parameters -> List Parameters -> String
@@ -83,14 +83,24 @@ store current list =
         saved =
             Maybe.withDefault [] (List.tail list)
     in
-    List.map parametersToString (current :: saved) |> String.join "|"
+    List.map parametersToString (current :: saved) |> String.join parameterListSplitter
+
+
+parameterListSplitter : String
+parameterListSplitter =
+    "|"
+
+
+parameterSplitter : String
+parameterSplitter =
+    "^"
 
 
 parametersFromString : String -> Parameters
 parametersFromString string =
     let
         list =
-            Debug.log "list" (String.split ":" string)
+            Debug.log "list" (String.split parameterSplitter string)
     in
     Parameters (pick 0 "" list) (pick 1 "" list) (pick 2 "" list) (pick 3 "" list) (pick 4 "" list) (pick 5 "" list)
 
@@ -114,7 +124,7 @@ parametersToString parameters =
         p =
             Debug.log "Parameters to String" parameters
     in
-    String.join ":"
+    String.join parameterSplitter
         [ parameters.eget_kapital
         , parameters.långfristiga_skulder
         , parameters.andelstal
