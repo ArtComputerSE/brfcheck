@@ -260,7 +260,7 @@ viewPage : Model -> Html Msg
 viewPage model =
     case model.route of
         Model.HomeRoute ->
-            viewCalculator model
+            viewCalculator model.parameters
 
         Model.BrfListRoute ->
             viewBrfList model

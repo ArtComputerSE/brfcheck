@@ -10,12 +10,12 @@ import Msg exposing (Msg)
 import StringUtil exposing (decimals, toNumberIfPresentOrZero, twoDecimal)
 
 
-viewCalculator : Model -> Html Msg
-viewCalculator model =
+viewCalculator : Parameters -> Html Msg
+viewCalculator parameters =
     div []
         [ p []
             [ text "Beteckning: "
-            , input [ class "name-input", onInput Msg.UpdateBeteckning, value model.parameters.beteckning ]
+            , input [ class "name-input", onInput Msg.UpdateBeteckning, value parameters.beteckning ]
                 []
             , input [ class "save-button", type_ "button", value "Spara", onClick Msg.Spara ]
                 []
@@ -24,25 +24,25 @@ viewCalculator model =
             []
             [ text "Nyckeltal" ]
         , div []
-            [ inputRow "Summa eget kapital:" Msg.UpdateEgetKapital model.parameters.eget_kapital 2 "kr"
-            , inputRow "Långfristiga skulder:" Msg.UpdateLångfristigaSkulder model.parameters.långfristiga_skulder 2 "kr"
-            , inputRow "Andelstal i %:" Msg.UpdateAndelstal model.parameters.andelstal 3 "%"
-            , inputRow "Lägenhetsyta:" Msg.UpdateLägenhetsyta model.parameters.lägenhetsyta 0 "kvm"
-            , inputRow "Månadsavgift:" Msg.UpdateMånadsavgift model.parameters.månadsavgift 2 "kr/mån"
+            [ inputRow "Summa eget kapital:" Msg.UpdateEgetKapital parameters.eget_kapital 2 "kr"
+            , inputRow "Långfristiga skulder:" Msg.UpdateLångfristigaSkulder parameters.långfristiga_skulder 2 "kr"
+            , inputRow "Andelstal i %:" Msg.UpdateAndelstal parameters.andelstal 3 "%"
+            , inputRow "Lägenhetsyta:" Msg.UpdateLägenhetsyta parameters.lägenhetsyta 0 "kvm"
+            , inputRow "Månadsavgift:" Msg.UpdateMånadsavgift parameters.månadsavgift 2 "kr/mån"
             ]
         , h1 [] [ text "Analys" ]
         , div []
-            [ resultRow "Fastighetens belåningsgrad: " (belåningsgrad model) "%"
-            , resultRow "Lägenhetens del av skulden: " (skuldandel model) " kr"
-            , resultRow "Lägenhetens del av skulden per kvadratmeter: " (skuldandel_per_kvm model) "kr"
-            , resultRow "Föreningens kostnadsökning vid 1% räntehöjning: " (brf_cost_increase model) "kr/mån"
+            [ resultRow "Fastighetens belåningsgrad: " (belåningsgrad parameters) "%"
+            , resultRow "Lägenhetens del av skulden: " (skuldandel parameters) " kr"
+            , resultRow "Lägenhetens del av skulden per kvadratmeter: " (skuldandel_per_kvm parameters) "kr"
+            , resultRow "Föreningens kostnadsökning vid 1% räntehöjning: " (brf_cost_increase parameters) "kr/mån"
             ]
         , h1 [] [ text "Utvärdering" ]
         , div []
-            [ resultRow "Lägenhetens kostnadsökning vid en räntehöjning om 1%: " (lgh_cost_increase model) "kr/mån"
-            , evalRow "Belåningsgrad:" (eval_belåningsgrad (belåningsgrad model))
-            , evalRow "Lägenhetens andel av skulden, per kvm:" (eval_skuldandel_per_kvm (skuldandel_per_kvm_calc model))
-            , evalRow "Årsavgift per kvm:" (eval_avgift_per_kvm model)
+            [ resultRow "Lägenhetens kostnadsökning vid en räntehöjning om 1%: " (lgh_cost_increase parameters) "kr/mån"
+            , evalRow "Belåningsgrad:" (eval_belåningsgrad (belåningsgrad parameters))
+            , evalRow "Lägenhetens andel av skulden, per kvm:" (eval_skuldandel_per_kvm (skuldandel_per_kvm_calc parameters))
+            , evalRow "Årsavgift per kvm:" (eval_avgift_per_kvm parameters)
             ]
         ]
 

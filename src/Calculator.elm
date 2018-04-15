@@ -1,20 +1,20 @@
 module Calculator exposing (..)
 
-import Model exposing (Model)
+import Model exposing (Parameters)
 import StringUtil exposing (toNumberIfPresentOrZero, twoDecimal)
 
 
 -- Calculations
 
 
-belåningsgrad : Model -> String
-belåningsgrad model =
+belåningsgrad : Parameters -> String
+belåningsgrad parameters =
     let
         kapital =
-            toNumberIfPresentOrZero model.parameters.eget_kapital
+            toNumberIfPresentOrZero parameters.eget_kapital
 
         skulder =
-            toNumberIfPresentOrZero model.parameters.långfristiga_skulder
+            toNumberIfPresentOrZero parameters.långfristiga_skulder
 
         summa =
             kapital + skulder
@@ -25,14 +25,14 @@ belåningsgrad model =
         twoDecimal ((skulder / summa) * 100)
 
 
-skuldandel : Model -> String
-skuldandel model =
+skuldandel : Parameters -> String
+skuldandel parameters =
     let
         skulder =
-            toNumberIfPresentOrZero model.parameters.långfristiga_skulder
+            toNumberIfPresentOrZero parameters.långfristiga_skulder
 
         andel =
-            toNumberIfPresentOrZero model.parameters.andelstal
+            toNumberIfPresentOrZero parameters.andelstal
     in
     if skulder == 0 || andel == 0 then
         ""
@@ -40,22 +40,22 @@ skuldandel model =
         twoDecimal (skulder * andel / 100)
 
 
-skuldandel_per_kvm : Model -> String
-skuldandel_per_kvm model =
-    twoDecimal (skuldandel_per_kvm_calc model)
+skuldandel_per_kvm : Parameters -> String
+skuldandel_per_kvm parameters =
+    twoDecimal (skuldandel_per_kvm_calc parameters)
 
 
-skuldandel_per_kvm_calc : Model -> Float
-skuldandel_per_kvm_calc model =
+skuldandel_per_kvm_calc : Parameters -> Float
+skuldandel_per_kvm_calc parameters =
     let
         skulder =
-            toNumberIfPresentOrZero model.parameters.långfristiga_skulder
+            toNumberIfPresentOrZero parameters.långfristiga_skulder
 
         andel =
-            toNumberIfPresentOrZero model.parameters.andelstal
+            toNumberIfPresentOrZero parameters.andelstal
 
         yta =
-            toNumberIfPresentOrZero model.parameters.lägenhetsyta
+            toNumberIfPresentOrZero parameters.lägenhetsyta
     in
     if skulder == 0 || andel == 0 then
         0.0
@@ -65,19 +65,19 @@ skuldandel_per_kvm_calc model =
         (skulder * andel / 100) / yta
 
 
-brf_cost_increase : Model -> String
-brf_cost_increase model =
-    twoDecimal (brf_cost_increase_calc model)
+brf_cost_increase : Parameters -> String
+brf_cost_increase parameters =
+    twoDecimal (brf_cost_increase_calc parameters)
 
 
-brf_cost_increase_calc : Model -> Float
-brf_cost_increase_calc model =
-    toNumberIfPresentOrZero model.parameters.långfristiga_skulder * 0.01 / 12
+brf_cost_increase_calc : Parameters -> Float
+brf_cost_increase_calc parameters =
+    toNumberIfPresentOrZero parameters.långfristiga_skulder * 0.01 / 12
 
 
-lgh_cost_increase : Model -> String
-lgh_cost_increase model =
-    twoDecimal (toNumberIfPresentOrZero model.parameters.andelstal * 0.01 * brf_cost_increase_calc model)
+lgh_cost_increase : Parameters -> String
+lgh_cost_increase parameters =
+    twoDecimal (toNumberIfPresentOrZero parameters.andelstal * 0.01 * brf_cost_increase_calc parameters)
 
 
 
@@ -110,14 +110,14 @@ eval_skuldandel_per_kvm spkvm =
         "Låg, under 3000 kr."
 
 
-eval_avgift_per_kvm : Model -> String
-eval_avgift_per_kvm model =
+eval_avgift_per_kvm : Parameters -> String
+eval_avgift_per_kvm parameters =
     let
         monthly =
-            toNumberIfPresentOrZero model.parameters.månadsavgift
+            toNumberIfPresentOrZero parameters.månadsavgift
 
         yta =
-            toNumberIfPresentOrZero model.parameters.lägenhetsyta
+            toNumberIfPresentOrZero parameters.lägenhetsyta
 
         avgift =
             if yta > 0 then
