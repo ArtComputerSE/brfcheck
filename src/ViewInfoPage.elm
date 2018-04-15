@@ -34,6 +34,13 @@ viewInfo =
                     ++ "når genom att trycka i mitten på det svarta fältet högst upp."
                 )
             ]
+        , h2 [] [ text "Tips för mobilen" ]
+        , p []
+            [ text
+                ("Om du vill ha kvick åtkomst för den här appen när du använder mobilen så lägg till "
+                    ++ "den på startskärmen. Titta efter den funktionen i webbläsarens meny."
+                )
+            ]
         , h2 [] [ text "Källkod" ]
         , p []
             [ text "Källkoden finns öppet tillgänglig på GitHub. Appen är skriven i Elm. "
