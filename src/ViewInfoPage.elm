@@ -1,7 +1,7 @@
 module ViewInfoPage exposing (..)
 
 import Html exposing (Html, a, div, h1, h2, p, text)
-import Html.Attributes exposing (href)
+import Html.Attributes exposing (href, target)
 
 
 viewInfo : Html msg
@@ -10,19 +10,19 @@ viewInfo =
         [ h1 [] [ text "Information" ]
         , p []
             [ text
-                ("När man köper en bostadsrätt så blir man medlem i den förening som äger huset, BRF. "
+                ("När man köper en bostadsrätt blir man medlem i den förening som äger huset, BRF. "
                     ++ "Föreningens ekonomi påverkar varje lägenhets ekonomi så det är viktigt att kontrollera "
                     ++ "hur föreningens finanser ser ut, plus om det är några större underhåll i närtid."
                 )
             ]
         , p []
             [ text
-                ("Denna app är baserad på en artikel i DN och räknar ut nyckeltal för en BRF baserat "
+                ("Denna app är baserad på en artikel i DN (2017-11-05) och räknar ut nyckeltal för en BRF baserat "
                     ++ "på de uppgifter som du ska ha fått av mäklaren."
-                    ++ "Utifrån nyckeltalen så gör appen en utvärdering, även den baserad på artikeln. "
+                    ++ "Utifrån nyckeltalen så gör appen en utvärdering, också baserad på artikeln. "
                 )
             , a
-                [ href "https://www.dn.se/ekonomi/din-ekonomi/sa-far-du-koll-pa-ekonomin-i-bostadsrattsforeningen/" ]
+                [ href "https://www.dn.se/ekonomi/din-ekonomi/sa-far-du-koll-pa-ekonomin-i-bostadsrattsforeningen/", target "_blank" ]
                 [ text "Här hittar du artikeln." ]
             ]
         , h2 [] [ text "Spara inmatade uppgifter" ]
@@ -33,5 +33,11 @@ viewInfo =
                     ++ "Om du vill spara något så trycker du på spara-knappen. Då kan du hitta den i listan som du "
                     ++ "når genom att trycka i mitten på det svarta fältet högst upp."
                 )
+            ]
+        , h2 [] [ text "Källkod" ]
+        , p []
+            [ text "Källkoden finns öppet tillgänglig på GitHub. Appen är skriven i Elm. "
+            , a [ href "https://github.com/ArtComputerSE/brfcheck", target "_blank" ]
+                [ text "Här hittar du källkoden." ]
             ]
         ]
