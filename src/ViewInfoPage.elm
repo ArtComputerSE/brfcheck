@@ -37,7 +37,7 @@ viewInfo =
         , h2 [] [ text "Tips för mobilen" ]
         , p []
             [ text
-                ("Om du vill ha kvick åtkomst för den här appen när du använder mobilen så lägg till "
+                ("Om du vill ha snabb åtkomst för den här appen när du använder mobilen så lägg till "
                     ++ "den på startskärmen. Titta efter den funktionen i webbläsarens meny."
                 )
             ]
