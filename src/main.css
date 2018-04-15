@@ -54,6 +54,7 @@ input {
 .clickable {
     border-style: outset;
     text-align: center;
+    margin: 5px;
 }
 
 .name-input {
