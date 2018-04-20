@@ -1,8 +1,8 @@
 module ViewCalculator exposing (viewCalculator)
 
 import Calculator exposing (belåningsgrad, brf_cost_increase, eval_avgift_per_kvm, eval_belåningsgrad, eval_skuldandel_per_kvm, lgh_cost_increase, skuldandel, skuldandel_per_kvm, skuldandel_per_kvm_calc)
-import Html exposing (Html, div, h1, input, p, text)
-import Html.Attributes exposing (class, size, step, type_, value)
+import Html exposing (Html, div, h1, img, input, p, text)
+import Html.Attributes exposing (class, size, src, step, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import Json.Decode
 import Model exposing (..)
@@ -17,7 +17,7 @@ viewCalculator parameters =
             [ text "Beteckning: "
             , input [ class "name-input", onInput Msg.UpdateBeteckning, value parameters.beteckning ]
                 []
-            , input [ class "save-button", type_ "button", value "Spara", onClick Msg.Spara ]
+            , img [ class "image-click", src "/add.png", onClick Msg.Spara ]
                 []
             ]
         , h1

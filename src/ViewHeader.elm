@@ -11,9 +11,9 @@ viewHeader : Html Msg
 viewHeader =
     div [ class "row" ]
         [ div [ class "menu", onClick (Msg.FollowRoute Model.HomeRoute) ]
-            [ img [ src "calculator.png" ] [] ]
+            [ img [ src "/calculator.png" ] [] ]
         , div [ class "menu", onClick (Msg.FollowRoute Model.BrfListRoute) ]
-            [ img [ src "brflist.png" ] [] ]
+            [ img [ src "/brflist.png" ] [] ]
         , div [ class "menu", onClick (Msg.FollowRoute Model.InfoRoute) ]
-            [ img [ src "info.png" ] [] ]
+            [ img [ src "/info.png" ] [] ]
         ]

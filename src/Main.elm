@@ -5,7 +5,9 @@ import Html.Attributes exposing (class)
 import Model exposing (Model, Parameters, Route, defaultParameters)
 import Msg exposing (Msg)
 import Navigation
+import Regex exposing (..)
 import UrlParser exposing ((</>))
+import ViewAdd exposing (addBrfFromUrl)
 import ViewBrfList exposing (viewBrfList)
 import ViewCalculator exposing (viewCalculator)
 import ViewHeader exposing (viewHeader)
@@ -186,6 +188,9 @@ update msg model =
         Msg.RemoveObject index ->
             ( { model | saved = removeFromList index model.saved }, Cmd.none )
 
+        Msg.AddObject parameters ->
+            ( { model | saved = parameters :: model.saved }, Cmd.none )
+
         Msg.FollowRoute route ->
             ( { model | route = route }, Cmd.none )
 
@@ -226,11 +231,6 @@ urlParser location =
 
         Just route ->
             Msg.FollowRoute route
-
-
-postsParser : UrlParser.Parser a a
-postsParser =
-    UrlParser.s "posts"
 
 
 addBrfParser : UrlParser.Parser (Model.CodedBrfRecord -> a) a
@@ -278,16 +278,21 @@ viewPage model =
         Model.InfoRoute ->
             viewInfo
 
-        Model.AddBrfRoute s ->
-            notImplementedYetPage model s
+        Model.AddBrfRoute code ->
+            ViewAdd.addBrfFromUrl model (parametersFromString (fromUri code))
 
         Model.NotFound ->
             notFoundPage model
 
 
-notImplementedYetPage : Model -> String -> Html Msg
-notImplementedYetPage model code =
-    div [] [ text ("This has not been implemented yet. Code: " ++ code) ]
+toUri : String -> String
+toUri code =
+    Regex.replace Regex.All (Regex.regex "\\^") (\_ -> "+") code
+
+
+fromUri : String -> String
+fromUri code =
+    Regex.replace Regex.All (Regex.regex "\\+") (\_ -> "^") code
 
 
 notFoundPage : Model -> Html Msg

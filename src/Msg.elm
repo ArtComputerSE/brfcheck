@@ -1,6 +1,6 @@
 module Msg exposing (..)
 
-import Model exposing (Route)
+import Model exposing (Parameters, Route)
 
 
 type Msg
@@ -13,4 +13,5 @@ type Msg
     | Spara
     | SetCurrent Int
     | RemoveObject Int
+    | AddObject Parameters
     | FollowRoute Route

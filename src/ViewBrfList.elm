@@ -33,6 +33,6 @@ viewBrf index parameters =
         , div [ class "cell" ] [ text (parameters.lägenhetsyta ++ " kvm") ]
         , div [ class "cell" ] [ text (parameters.månadsavgift ++ " kr") ]
         , div [ class "cell" ]
-            [ img [ src "remove.png", onClick (Msg.RemoveObject index) ] []
+            [ img [ class "image-click", src "/remove.png", onClick (Msg.RemoveObject index) ] []
             ]
         ]
