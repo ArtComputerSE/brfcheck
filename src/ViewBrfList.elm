@@ -44,7 +44,7 @@ viewBrf location index parameters =
             [ img [ class "image-click", src "%PUBLIC_URL%/remove.png", onClick (Msg.RemoveObject index) ] []
             ]
         , div [ class "cell" ]
-            [ div [ id ("parameters" ++ toString index) ]
+            [ div []
                 [ img
                     [ class "copy-button"
                     , src "%PUBLIC_URL%/clipboard.png"
@@ -52,7 +52,7 @@ viewBrf location index parameters =
                     ]
                     []
                 , span
-                    [ class "hidden-span" ]
+                    [ class "hidden-span", id ("parameters" ++ toString index) ]
                     [ text (toUri location (Model.parametersToString parameters)) ]
                 ]
             ]
