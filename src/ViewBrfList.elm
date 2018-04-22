@@ -63,4 +63,7 @@ toUri : Navigation.Location -> String -> String
 toUri location code =
     location.origin
         ++ "%PUBLIC_URL%/add/"
-        ++ Regex.replace Regex.All (Regex.regex "\\^") (\_ -> "+") code
+        ++ (Regex.replace Regex.All (Regex.regex "\\^") (\_ -> "+") code
+                |> Regex.replace Regex.All (Regex.regex " ") (\_ -> "%20")
+                |> Regex.replace Regex.All (Regex.regex ",") (\_ -> ".:")
+           )

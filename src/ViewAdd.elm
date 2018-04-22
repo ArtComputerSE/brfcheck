@@ -38,3 +38,4 @@ fromUri : String -> String
 fromUri code =
     Regex.replace Regex.All (Regex.regex "\\+") (\_ -> "^") code
         |> Regex.replace Regex.All (Regex.regex (Regex.escape "%20")) (\_ -> " ")
+        |> Regex.replace Regex.All (Regex.regex (Regex.escape ".:")) (\_ -> ",")
