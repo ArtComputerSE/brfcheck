@@ -65,7 +65,11 @@ input {
     border-bottom-width: 5px;
 }
 
-.save-button {
-    background-color: lightgray;
+.copy-button {
+    background-color: transparent;
     padding: 2px;
+}
+
+.hidden-span {
+    font-size: 1px;
 }

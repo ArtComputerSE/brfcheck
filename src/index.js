@@ -1,6 +1,7 @@
 import './main.css';
 import { Main } from './Main.elm';
 import registerServiceWorker from './registerServiceWorker';
+import Clipboard from "./clipboard.js"
 
 var storedState = localStorage.getItem('model');
 var startingState = storedState ? JSON.parse(storedState) : null;
@@ -16,3 +17,5 @@ elmApp.ports.removeStorage.subscribe(function() {
 });
 
 registerServiceWorker();
+
+var clipboard = new Clipboard('.copy-button')

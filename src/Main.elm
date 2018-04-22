@@ -2,10 +2,9 @@ port module Main exposing (..)
 
 import Html exposing (Html, div, h1, input, label, p, table, tbody, td, text, tr)
 import Html.Attributes exposing (class)
-import Model exposing (Model, Parameters, Route, defaultParameters)
+import Model exposing (Model, Parameters, Route)
 import Msg exposing (Msg)
 import Navigation
-import Regex exposing (..)
 import UrlParser exposing ((</>))
 import ViewAdd exposing (addBrfFromUrl)
 import ViewBrfList exposing (viewBrfList)
@@ -34,18 +33,22 @@ port setStorage : String -> Cmd msg
 port removeStorage : String -> Cmd msg
 
 
-initialModel : Route -> List Parameters -> Model
-initialModel route parameters =
+initialModel : Navigation.Location -> List Parameters -> Model
+initialModel location parameters =
     let
         p =
             Debug.log "Parameters " (toString parameters)
 
         current =
-            Maybe.withDefault defaultParameters (List.head parameters)
+            Maybe.withDefault Model.defaultParameters (List.head parameters)
+
+        route =
+            Maybe.withDefault Model.HomeRoute (UrlParser.parsePath routeParser location)
     in
     { route = route
     , parameters = current
     , saved = parameters
+    , location = location
     }
 
 
@@ -54,86 +57,13 @@ init maybeString location =
     let
         l =
             Debug.log "init location" location
-
-        route =
-            Maybe.withDefault Model.HomeRoute (UrlParser.parsePath routeParser location)
     in
     case Debug.log "Maybe stored string" maybeString of
         Just something ->
-            ( initialModel route (restore something), Cmd.none )
+            ( initialModel location (Model.restore something), Cmd.none )
 
         Nothing ->
-            ( initialModel route [ defaultParameters ], Cmd.none )
-
-
-restore : String -> List Parameters
-restore encoded =
-    let
-        e =
-            Debug.log "Restoring " encoded
-    in
-    String.split parameterListSplitter encoded |> List.map parametersFromString
-
-
-store : Parameters -> List Parameters -> String
-store current list =
-    let
-        x =
-            Debug.log "Store "
-                (toString list)
-
-        saved =
-            Maybe.withDefault [] (List.tail list)
-    in
-    List.map parametersToString (current :: saved) |> String.join parameterListSplitter
-
-
-parameterListSplitter : String
-parameterListSplitter =
-    "|"
-
-
-parameterSplitter : String
-parameterSplitter =
-    "^"
-
-
-parametersFromString : String -> Parameters
-parametersFromString string =
-    let
-        list =
-            Debug.log "list" (String.split parameterSplitter string)
-    in
-    Parameters (pick 0 "" list) (pick 1 "" list) (pick 2 "" list) (pick 3 "" list) (pick 4 "" list) (pick 5 "" list)
-
-
-pick : Int -> s -> List s -> s
-pick n def list =
-    if n == 0 then
-        Maybe.withDefault def (List.head list)
-    else
-        case List.tail list of
-            Just tail ->
-                pick (n - 1) def tail
-
-            Nothing ->
-                def
-
-
-parametersToString : Parameters -> String
-parametersToString parameters =
-    let
-        p =
-            Debug.log "Parameters to String" parameters
-    in
-    String.join parameterSplitter
-        [ parameters.eget_kapital
-        , parameters.långfristiga_skulder
-        , parameters.andelstal
-        , parameters.lägenhetsyta
-        , parameters.månadsavgift
-        , parameters.beteckning
-        ]
+            ( initialModel location [ Model.defaultParameters ], Cmd.none )
 
 
 
@@ -150,7 +80,7 @@ updateWithStorage msg model =
             newModel.parameters
     in
     ( newModel
-    , Cmd.batch [ commands, setStorage (store newParameters model.saved) ]
+    , Cmd.batch [ commands, setStorage (Model.store newParameters model.saved) ]
     )
 
 
@@ -195,24 +125,25 @@ update msg model =
             ( { model | route = route }, Cmd.none )
 
         Msg.GotoHomePage ->
-            (model, Navigation.newUrl (urlFromRoute Model.HomeRoute))
+            ( model, Navigation.newUrl (urlFromRoute Model.HomeRoute) )
 
         Msg.GotoBrfListPage ->
-            (model, Navigation.newUrl (urlFromRoute Model.BrfListRoute))
+            ( model, Navigation.newUrl (urlFromRoute Model.BrfListRoute) )
 
         Msg.GotoInfoPage ->
-            (model, Navigation.newUrl (urlFromRoute Model.InfoRoute))
+            ( model, Navigation.newUrl (urlFromRoute Model.InfoRoute) )
+
 
 setCurrent : Int -> Model -> Model
 setCurrent index model =
     let
         newCurrent =
-            pick index defaultParameters model.saved
+            Model.pick index Model.defaultParameters model.saved
 
         newSaved =
             removeFromList index model.saved
     in
-    Model Model.HomeRoute newCurrent (newCurrent :: newSaved)
+    Model Model.HomeRoute newCurrent (newCurrent :: newSaved) model.location
 
 
 removeFromList : Int -> List a -> List a
@@ -222,7 +153,7 @@ removeFromList index list =
 
 addObjectAndGoToList : Model -> Parameters -> Model
 addObjectAndGoToList model parameters =
-    Model Model.BrfListRoute parameters (parameters :: model.saved)
+    Model Model.BrfListRoute parameters (parameters :: model.saved) model.location
 
 
 
@@ -267,16 +198,17 @@ addBrfParser =
 brfListParser : UrlParser.Parser a a
 brfListParser =
     UrlParser.oneOf
-            [ UrlParser.s "list"
-            , UrlParser.s "brfcheck" </> UrlParser.s "list"
-            ]
+        [ UrlParser.s "list"
+        , UrlParser.s "brfcheck" </> UrlParser.s "list"
+        ]
+
 
 infoParser : UrlParser.Parser a a
 infoParser =
     UrlParser.oneOf
-            [ UrlParser.s "info"
-            , UrlParser.s "brfcheck" </> UrlParser.s "info"
-            ]
+        [ UrlParser.s "info"
+        , UrlParser.s "brfcheck" </> UrlParser.s "info"
+        ]
 
 
 homeParser : UrlParser.Parser a a
@@ -332,20 +264,10 @@ viewPage model =
             viewInfo
 
         Model.AddBrfRoute code ->
-            ViewAdd.addBrfFromUrl model (parametersFromString (fromUri code))
+            ViewAdd.addBrfFromUrl model code
 
         Model.NotFound ->
             notFoundPage model
-
-
-toUri : String -> String
-toUri code =
-    Regex.replace Regex.All (Regex.regex "\\^") (\_ -> "+") code
-
-
-fromUri : String -> String
-fromUri code =
-    Regex.replace Regex.All (Regex.regex "\\+") (\_ -> "^") code
 
 
 notFoundPage : Model -> Html Msg

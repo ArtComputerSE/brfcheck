@@ -4,11 +4,16 @@ import Html exposing (Html, div, h1, img, p, text)
 import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick)
 import Model exposing (Model, Parameters)
-import Msg exposing (..)
+import Msg
+import Regex
 
 
-addBrfFromUrl : Model -> Parameters -> Html Msg
-addBrfFromUrl model parameters =
+addBrfFromUrl : Model -> String -> Html Msg.Msg
+addBrfFromUrl model url =
+    let
+        parameters =
+            Model.parametersFromString (fromUri url)
+    in
     div []
         [ h1 []
             [ text "Lägg till" ]
@@ -27,3 +32,9 @@ addBrfFromUrl model parameters =
                 ]
             ]
         ]
+
+
+fromUri : String -> String
+fromUri code =
+    Regex.replace Regex.All (Regex.regex "\\+") (\_ -> "^") code
+        |> Regex.replace Regex.All (Regex.regex (Regex.escape "%20")) (\_ -> " ")
