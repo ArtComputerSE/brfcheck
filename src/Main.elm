@@ -183,17 +183,25 @@ update msg model =
             ( { model | saved = params :: model.saved }, Cmd.none )
 
         Msg.SetCurrent index ->
-            ( setCurrent index model, Navigation.newUrl "/" )
+            ( setCurrent index model, Navigation.newUrl (urlFromRoute Model.HomeRoute) )
 
         Msg.RemoveObject index ->
             ( { model | saved = removeFromList index model.saved }, Cmd.none )
 
         Msg.AddObject parameters ->
-            ( { model | saved = parameters :: model.saved }, Navigation.newUrl "/list" )
+            ( { model | saved = parameters :: model.saved }, Navigation.newUrl (urlFromRoute Model.BrfListRoute) )
 
         Msg.FollowRoute route ->
             ( { model | route = route }, Cmd.none )
 
+        Msg.GotoHomePage ->
+            (model, Navigation.newUrl (urlFromRoute Model.HomeRoute))
+
+        Msg.GotoBrfListPage ->
+            (model, Navigation.newUrl (urlFromRoute Model.BrfListRoute))
+
+        Msg.GotoInfoPage ->
+            (model, Navigation.newUrl (urlFromRoute Model.InfoRoute))
 
 setCurrent : Int -> Model -> Model
 setCurrent index model =
@@ -243,6 +251,7 @@ routeParser =
     UrlParser.oneOf
         [ UrlParser.map Model.AddBrfRoute addBrfParser
         , UrlParser.map Model.BrfListRoute brfListParser
+        , UrlParser.map Model.InfoRoute infoParser
         , UrlParser.map Model.HomeRoute homeParser
         ]
 
@@ -260,12 +269,36 @@ brfListParser =
     UrlParser.s "list"
 
 
+infoParser : UrlParser.Parser a a
+infoParser =
+    UrlParser.s "info"
+
+
 homeParser : UrlParser.Parser a a
 homeParser =
     UrlParser.oneOf
         [ UrlParser.s "index.html"
         , UrlParser.s ""
         ]
+
+
+urlFromRoute : Route -> String
+urlFromRoute route =
+    case route of
+        Model.HomeRoute ->
+            "/"
+
+        Model.BrfListRoute ->
+            "/list"
+
+        Model.InfoRoute ->
+            "/info"
+
+        Model.AddBrfRoute _ ->
+            "/add"
+
+        Model.NotFound ->
+            "/notfound"
 
 
 

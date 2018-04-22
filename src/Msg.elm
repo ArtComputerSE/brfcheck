@@ -15,3 +15,6 @@ type Msg
     | RemoveObject Int
     | AddObject Parameters
     | FollowRoute Route
+    | GotoHomePage
+    | GotoBrfListPage
+    | GotoInfoPage
