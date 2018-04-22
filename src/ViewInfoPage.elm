@@ -30,8 +30,19 @@ viewInfo =
             [ text
                 ("Appen är inte kopplad till någon server så allt sparas lokalt i din webbläsare i s.k. \"local storage\"."
                     ++ "Det som du matade in sist kommer alltid upp i kalkylorn."
-                    ++ "Om du vill spara något så trycker du på spara-knappen. Då kan du hitta den i listan som du "
+                    ++ "Om du vill spara något så trycker du på plustecknet. Då kan du hitta den i listan som du "
                     ++ "når genom att trycka i mitten på det svarta fältet högst upp."
+                )
+            ]
+        , h2 [] [ text "Kopiera till urklipp" ]
+        , p []
+            [ text
+                ("Eftersom allt lagras i din webbläsare, så för att spara eller dela en BRF, behöver du kopiera den "
+                    ++ "till urklipp och sedan klistra in den i en chatt eller ett mail. "
+                    ++ "I listan över BRF finns en blå symbol längst till höger, klicka på den och det blir en länk som "
+                    ++ "mottagaren kan klicka på.  "
+                    ++ "Observera att en del chatt-program är inte fullgoda webbläsare utan man behöver välja alternativ "
+                    ++ "som \"Öppna i Chrome\" eller liknande."
                 )
             ]
         , h2 [] [ text "Tips för mobilen" ]
