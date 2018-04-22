@@ -249,7 +249,10 @@ routeParser =
 
 addBrfParser : UrlParser.Parser (Model.CodedBrfRecord -> a) a
 addBrfParser =
-    UrlParser.s "add" </> UrlParser.string
+    UrlParser.oneOf
+        [ UrlParser.s "add" </> UrlParser.string
+        , UrlParser.s "brfcheck" </> UrlParser.s "add" </> UrlParser.string
+        ]
 
 
 brfListParser : UrlParser.Parser a a

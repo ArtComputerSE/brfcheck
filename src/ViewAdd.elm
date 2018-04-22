@@ -23,7 +23,7 @@ addBrfFromUrl model parameters =
             , div [ class "cell" ] [ text (parameters.lägenhetsyta ++ " kvm") ]
             , div [ class "cell" ] [ text (parameters.månadsavgift ++ " kr") ]
             , div [ class "cell" ]
-                [ img [ class "image-click", src "add.png", onClick (Msg.AddObject parameters) ] []
+                [ img [ class "image-click", src "%PUBLIC_URL%/add.png", onClick (Msg.AddObject parameters) ] []
                 ]
             ]
         ]

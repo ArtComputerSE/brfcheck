@@ -17,7 +17,7 @@ viewCalculator parameters =
             [ text "Beteckning: "
             , input [ class "name-input", onInput Msg.UpdateBeteckning, value parameters.beteckning ]
                 []
-            , img [ class "image-click", src "add.png", onClick Msg.Spara ]
+            , img [ class "image-click", src "%PUBLIC_URL%/add.png", onClick Msg.Spara ]
                 []
             ]
         , h1
