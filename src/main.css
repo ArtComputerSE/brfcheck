@@ -71,5 +71,5 @@ input {
 }
 
 .hidden-span {
-    font-size: 1px;
+    font-size: 0;
 }
