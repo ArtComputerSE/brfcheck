@@ -266,12 +266,17 @@ addBrfParser =
 
 brfListParser : UrlParser.Parser a a
 brfListParser =
-    UrlParser.s "list"
-
+    UrlParser.oneOf
+            [ UrlParser.s "list"
+            , UrlParser.s "brfcheck" </> UrlParser.s "list"
+            ]
 
 infoParser : UrlParser.Parser a a
 infoParser =
-    UrlParser.s "info"
+    UrlParser.oneOf
+            [ UrlParser.s "info"
+            , UrlParser.s "brfcheck" </> UrlParser.s "info"
+            ]
 
 
 homeParser : UrlParser.Parser a a
@@ -279,6 +284,7 @@ homeParser =
     UrlParser.oneOf
         [ UrlParser.s "index.html"
         , UrlParser.s ""
+        , UrlParser.s "brfcheck"
         ]
 
 
@@ -286,19 +292,19 @@ urlFromRoute : Route -> String
 urlFromRoute route =
     case route of
         Model.HomeRoute ->
-            "/"
+            "%PUBLIC_URL%/"
 
         Model.BrfListRoute ->
-            "/list"
+            "%PUBLIC_URL%/list"
 
         Model.InfoRoute ->
-            "/info"
+            "%PUBLIC_URL%/info"
 
         Model.AddBrfRoute _ ->
-            "/add"
+            "%PUBLIC_URL%/add"
 
         Model.NotFound ->
-            "/notfound"
+            "%PUBLIC_URL%/notfound"
 
 
 
