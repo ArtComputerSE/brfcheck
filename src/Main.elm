@@ -183,13 +183,13 @@ update msg model =
             ( { model | saved = params :: model.saved }, Cmd.none )
 
         Msg.SetCurrent index ->
-            ( setCurrent index model, Cmd.none )
+            ( setCurrent index model, Navigation.newUrl "/" )
 
         Msg.RemoveObject index ->
             ( { model | saved = removeFromList index model.saved }, Cmd.none )
 
         Msg.AddObject parameters ->
-            ( { model | saved = parameters :: model.saved }, Cmd.none )
+            ( { model | saved = parameters :: model.saved }, Navigation.newUrl "/list" )
 
         Msg.FollowRoute route ->
             ( { model | route = route }, Cmd.none )
@@ -210,6 +210,11 @@ setCurrent index model =
 removeFromList : Int -> List a -> List a
 removeFromList index list =
     List.append (List.take index list) (List.drop (index + 1) list)
+
+
+addObjectAndGoToList : Model -> Parameters -> Model
+addObjectAndGoToList model parameters =
+    Model Model.BrfListRoute parameters (parameters :: model.saved)
 
 
 
@@ -233,9 +238,23 @@ urlParser location =
             Msg.FollowRoute route
 
 
+routeParser : UrlParser.Parser (Route -> a) a
+routeParser =
+    UrlParser.oneOf
+        [ UrlParser.map Model.AddBrfRoute addBrfParser
+        , UrlParser.map Model.BrfListRoute brfListParser
+        , UrlParser.map Model.HomeRoute homeParser
+        ]
+
+
 addBrfParser : UrlParser.Parser (Model.CodedBrfRecord -> a) a
 addBrfParser =
     UrlParser.s "add" </> UrlParser.string
+
+
+brfListParser : UrlParser.Parser a a
+brfListParser =
+    UrlParser.s "list"
 
 
 homeParser : UrlParser.Parser a a
@@ -243,14 +262,6 @@ homeParser =
     UrlParser.oneOf
         [ UrlParser.s "index.html"
         , UrlParser.s ""
-        ]
-
-
-routeParser : UrlParser.Parser (Route -> a) a
-routeParser =
-    UrlParser.oneOf
-        [ UrlParser.map Model.AddBrfRoute addBrfParser
-        , UrlParser.map Model.HomeRoute homeParser
         ]
 
 
