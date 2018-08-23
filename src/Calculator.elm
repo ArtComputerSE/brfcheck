@@ -1,7 +1,8 @@
-module Calculator exposing (..)
+module Calculator exposing (belåningsgrad, brf_cost_increase, brf_cost_increase_calc, eval_avgift_per_kvm, eval_belåningsgrad, eval_skuldandel_per_kvm, lgh_cost_increase, skuldandel, skuldandel_per_kvm, skuldandel_per_kvm_calc)
 
 import Model exposing (Parameters)
 import StringUtil exposing (toNumberIfPresentOrZero, twoDecimal)
+
 
 
 -- Calculations
@@ -21,6 +22,7 @@ belåningsgrad parameters =
     in
     if summa == 0 then
         ""
+
     else
         twoDecimal ((skulder / summa) * 100)
 
@@ -36,6 +38,7 @@ skuldandel parameters =
     in
     if skulder == 0 || andel == 0 then
         ""
+
     else
         twoDecimal (skulder * andel / 100)
 
@@ -59,8 +62,10 @@ skuldandel_per_kvm_calc parameters =
     in
     if skulder == 0 || andel == 0 then
         0.0
+
     else if yta == 0 then
         0.0
+
     else
         (skulder * andel / 100) / yta
 
@@ -92,8 +97,10 @@ eval_belåningsgrad fastighetBelåningString =
     in
     if fastighetsBelåningsgrad <= 25 then
         "OK, mindre än 25%."
+
     else if fastighetsBelåningsgrad <= 50 then
         "Gränsfall, 25-50%."
+
     else
         "Se upp! Över 50%."
 
@@ -102,10 +109,13 @@ eval_skuldandel_per_kvm : Float -> String
 eval_skuldandel_per_kvm spkvm =
     if spkvm >= 9000 then
         "Hög, över 9000 kr."
+
     else if spkvm >= 6000 then
         "Måttlig till hög, 6000 - 9000 kr."
+
     else if spkvm > 3000 then
         "Måttlig till låg, 3000 - 6000 kr."
+
     else
         "Låg, under 3000 kr."
 
@@ -122,14 +132,18 @@ eval_avgift_per_kvm parameters =
         avgift =
             if yta > 0 then
                 monthly * 12 / yta
+
             else
                 0
     in
     if avgift >= 900 then
         "Hög, över 900 kr"
+
     else if avgift >= 650 then
         "Måttlig till hög, 650 - 900 kr."
+
     else if avgift > 300 then
         "Måttlig till låg, 300 - 650 kr."
+
     else
         "Låg, under 300 kr."

@@ -82,5 +82,5 @@ evalRow label result =
     div [ class "row" ]
         [ div [ class "col-left" ] [ text label ]
         , div [ class "col-center" ] [ text result ]
-        , div [ class "col-right" ] [text ""]
+        , div [ class "col-right" ] [ text "" ]
         ]

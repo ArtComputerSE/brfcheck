@@ -1,4 +1,4 @@
-port module Main exposing (..)
+port module Main exposing (addBrfParser, addObjectAndGoToList, brfListParser, homeParser, infoParser, init, initialModel, main, notFoundPage, removeFromList, removeStorage, routeParser, setCurrent, setStorage, subscriptions, update, updateWithStorage, urlFromRoute, urlParser, view, viewPage)
 
 import Html exposing (Html, div, h1, input, label, p, table, tbody, td, text, tr)
 import Html.Attributes exposing (class)

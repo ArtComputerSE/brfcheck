@@ -1,4 +1,4 @@
-module ViewAdd exposing (..)
+module ViewAdd exposing (addBrfFromUrl, fromUri)
 
 import Html exposing (Html, div, h1, img, p, text)
 import Html.Attributes exposing (class, src)

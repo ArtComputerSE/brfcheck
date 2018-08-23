@@ -1,7 +1,8 @@
-module StringUtil exposing (..)
+module StringUtil exposing (decimals, removeSpace, replaceDecimalSeparator, toNumberIfPresentOrZero, twoDecimal)
 
 import FormatNumber exposing (format)
 import Regex
+
 
 
 -- String conversions

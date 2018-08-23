@@ -1,4 +1,4 @@
-module ViewBrfList exposing (..)
+module ViewBrfList exposing (headers, toUri, vb, viewBrf, viewBrfList)
 
 import Html exposing (Html, div, h1, img, p, span, text)
 import Html.Attributes exposing (attribute, class, id, src)

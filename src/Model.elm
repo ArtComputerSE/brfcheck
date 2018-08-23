@@ -1,6 +1,7 @@
-module Model exposing (..)
+module Model exposing (CodedBrfRecord, Model, Parameters, Route(..), defaultParameters, parameterListSplitter, parameterSplitter, parametersFromString, parametersToString, pick, restore, store)
 
 import Navigation
+
 
 
 -- MODEL
@@ -80,6 +81,7 @@ pick : Int -> s -> List s -> s
 pick n def list =
     if n == 0 then
         Maybe.withDefault def (List.head list)
+
     else
         case List.tail list of
             Just tail ->

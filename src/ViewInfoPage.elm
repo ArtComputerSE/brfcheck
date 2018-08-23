@@ -1,4 +1,4 @@
-module ViewInfoPage exposing (..)
+module ViewInfoPage exposing (viewInfo)
 
 import Html exposing (Html, a, div, h1, h2, p, text)
 import Html.Attributes exposing (href, target)
