@@ -1,12 +1,14 @@
 module ViewBrfList exposing (headers, toUri, vb, viewBrf, viewBrfList)
 
+import Browser.Navigation
 import Html exposing (Html, div, h1, img, p, span, text)
 import Html.Attributes exposing (attribute, class, id, src)
 import Html.Events exposing (onClick)
 import Model exposing (Model, Parameters)
 import Msg
-import Navigation
 import Regex
+import StringUtil exposing (userReplace)
+import Url
 
 
 viewBrfList : Model -> Html Msg.Msg
@@ -29,12 +31,12 @@ headers =
         ]
 
 
-vb : Navigation.Location -> Int -> Parameters -> Html Msg.Msg
+vb : Url.Url -> Int -> Parameters -> Html Msg.Msg
 vb location =
     viewBrf location
 
 
-viewBrf : Navigation.Location -> Int -> Parameters -> Html Msg.Msg
+viewBrf : Url.Url -> Int -> Parameters -> Html Msg.Msg
 viewBrf location index parameters =
     div [ class "row" ]
         [ div [ class "cell clickable", onClick (Msg.SetCurrent index) ] [ text parameters.beteckning ]
@@ -48,22 +50,21 @@ viewBrf location index parameters =
                 [ img
                     [ class "copy-button"
                     , src "%PUBLIC_URL%/clipboard.png"
-                    , attribute "data-clipboard-target" ("#parameters" ++ toString index)
+                    , attribute "data-clipboard-target" ("#parameters" ++ String.fromInt index)
                     ]
                     []
                 , span
-                    [ class "hidden-span", id ("parameters" ++ toString index) ]
+                    [ class "hidden-span", id ("parameters" ++ String.fromInt index) ]
                     [ text (toUri location (Model.parametersToString parameters)) ]
                 ]
             ]
         ]
 
 
-toUri : Navigation.Location -> String -> String
+toUri : Url.Url -> String -> String
 toUri location code =
-    location.origin
+    Url.toString location
         ++ "%PUBLIC_URL%/add/"
-        ++ (Regex.replace Regex.All (Regex.regex "\\^") (\_ -> "+") code
-                |> Regex.replace Regex.All (Regex.regex " ") (\_ -> "%20")
-                |> Regex.replace Regex.All (Regex.regex ",") (\_ -> ".:")
-           )
+        ++ userReplace "\\^" (\_ -> "+") code
+        |> userReplace " " (\_ -> "%20")
+        |> userReplace "," (\_ -> ".:")

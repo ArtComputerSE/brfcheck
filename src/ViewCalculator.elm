@@ -7,7 +7,7 @@ import Html.Events exposing (on, onClick, onInput)
 import Json.Decode
 import Model exposing (..)
 import Msg exposing (Msg)
-import StringUtil exposing (decimals, toNumberIfPresentOrZero, twoDecimal)
+import StringUtil exposing (toNumberIfPresentOrZero, twoDecimal)
 
 
 viewCalculator : Parameters -> Html Msg
@@ -52,7 +52,7 @@ inputRow label inputMessage currentValue d suffix =
     div [ class "row" ]
         [ div [ class "col-left" ] [ text label ]
         , div [ class "col-center" ]
-            [ input [ onMyBlur inputMessage, value (decimals d (toNumberIfPresentOrZero currentValue)), size 15, step "any" ] []
+            [ input [ onMyBlur inputMessage, value (String.fromFloat (toNumberIfPresentOrZero currentValue)), size 15, step "any" ] []
             ]
         , div [ class "col-right" ] [ text suffix ]
         ]

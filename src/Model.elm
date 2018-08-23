@@ -1,6 +1,7 @@
 module Model exposing (CodedBrfRecord, Model, Parameters, Route(..), defaultParameters, parameterListSplitter, parameterSplitter, parametersFromString, parametersToString, pick, restore, store)
 
-import Navigation
+import Browser.Navigation
+import Url
 
 
 
@@ -11,7 +12,7 @@ type alias Model =
     { route : Route
     , parameters : Parameters
     , saved : List Parameters
-    , location : Navigation.Location
+    , location : Url.Url
     }
 
 
@@ -50,7 +51,7 @@ store current list =
     let
         x =
             Debug.log "Store "
-                (toString list)
+                (Debug.toString list)
 
         saved =
             Maybe.withDefault [] (List.tail list)

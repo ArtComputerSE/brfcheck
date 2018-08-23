@@ -1,7 +1,7 @@
-module StringUtil exposing (decimals, removeSpace, replaceDecimalSeparator, toNumberIfPresentOrZero, twoDecimal)
+module StringUtil exposing (removeSpace, replaceDecimalSeparator, toNumberIfPresentOrZero, twoDecimal, userReplace)
 
-import FormatNumber exposing (format)
 import Regex
+import String
 
 
 
@@ -10,24 +10,29 @@ import Regex
 
 toNumberIfPresentOrZero : String -> Float
 toNumberIfPresentOrZero string =
-    Result.withDefault 0 (String.toFloat (removeSpace (replaceDecimalSeparator string)))
+    Maybe.withDefault 0 (String.toFloat (removeSpace (replaceDecimalSeparator string)))
 
 
 replaceDecimalSeparator : String -> String
 replaceDecimalSeparator string =
-    Regex.replace Regex.All (Regex.regex ",") (\_ -> ".") string
+    String.replace "," "." string
 
 
 removeSpace : String -> String
 removeSpace string =
-    Regex.replace Regex.All (Regex.regex " ") (\_ -> "") string
+    String.replace " " "" string
 
 
 twoDecimal : Float -> String
 twoDecimal n =
-    decimals 2 n
+    String.fromFloat n
 
 
-decimals : Int -> Float -> String
-decimals d n =
-    format { decimals = d, thousandSeparator = " ", decimalSeparator = ",", negativePrefix = "−", negativeSuffix = "" } n
+userReplace : String -> (Regex.Match -> String) -> String -> String
+userReplace userRegex replacer string =
+    case Regex.fromString userRegex of
+        Nothing ->
+            string
+
+        Just regex ->
+            Regex.replace regex replacer string

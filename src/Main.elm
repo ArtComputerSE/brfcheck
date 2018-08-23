@@ -1,11 +1,13 @@
 port module Main exposing (addBrfParser, addObjectAndGoToList, brfListParser, homeParser, infoParser, init, initialModel, main, notFoundPage, removeFromList, removeStorage, routeParser, setCurrent, setStorage, subscriptions, update, updateWithStorage, urlFromRoute, urlParser, view, viewPage)
 
+import Browser
+import Browser.Navigation
 import Html exposing (Html, div, h1, input, label, p, table, tbody, td, text, tr)
 import Html.Attributes exposing (class)
 import Model exposing (Model, Parameters, Route)
 import Msg exposing (Msg)
-import Navigation
-import UrlParser exposing ((</>))
+import Url
+import Url.Parser exposing ((</>), Parser, int, map, oneOf, s, string)
 import ViewAdd exposing (addBrfFromUrl)
 import ViewBrfList exposing (viewBrfList)
 import ViewCalculator exposing (viewCalculator)
@@ -15,7 +17,7 @@ import ViewInfoPage exposing (viewInfo)
 
 main : Program (Maybe String) Model Msg
 main =
-    Navigation.programWithFlags urlParser
+    Browser.application
         { init = init
         , view = view
         , update = updateWithStorage
@@ -33,7 +35,7 @@ port setStorage : String -> Cmd msg
 port removeStorage : String -> Cmd msg
 
 
-initialModel : Navigation.Location -> List Parameters -> Model
+initialModel : Url.Url -> List Parameters -> Model
 initialModel location parameters =
     let
         p =
@@ -43,7 +45,7 @@ initialModel location parameters =
             Maybe.withDefault Model.defaultParameters (List.head parameters)
 
         route =
-            Maybe.withDefault Model.HomeRoute (UrlParser.parsePath routeParser location)
+            Maybe.withDefault Model.HomeRoute (Parser.parsePath routeParser location)
     in
     { route = route
     , parameters = current
@@ -52,11 +54,11 @@ initialModel location parameters =
     }
 
 
-init : Maybe String -> Navigation.Location -> ( Model, Cmd Msg )
+init : Maybe String -> Url.Url -> ( Model, Cmd Msg )
 init maybeString location =
     let
         l =
-            Debug.log "init location" location
+            Debug.log "init location" (Url.toString location)
     in
     case Debug.log "Maybe stored string" maybeString of
         Just something ->
@@ -158,65 +160,65 @@ addObjectAndGoToList model parameters =
 
 
 -- PARSING
+{-
+   urlParser : Url.Url -> Msg
+   urlParser location =
+       let
+           l =
+               Debug.log "location" (Url.toString location)
+
+           parsed =
+               Parser.parsePath routeParser location
+       in
+       case Debug.log "parsed" parsed of
+           Nothing ->
+               Msg.FollowRoute Model.NotFound
+
+           Just route ->
+               Msg.FollowRoute route
+-}
 
 
-urlParser : Navigation.Location -> Msg
-urlParser location =
-    let
-        l =
-            Debug.log "location" location
-
-        parsed =
-            UrlParser.parsePath routeParser location
-    in
-    case Debug.log "parsed" parsed of
-        Nothing ->
-            Msg.FollowRoute Model.NotFound
-
-        Just route ->
-            Msg.FollowRoute route
-
-
-routeParser : UrlParser.Parser (Route -> a) a
+routeParser : Parser (Route -> a) a
 routeParser =
-    UrlParser.oneOf
-        [ UrlParser.map Model.AddBrfRoute addBrfParser
-        , UrlParser.map Model.BrfListRoute brfListParser
-        , UrlParser.map Model.InfoRoute infoParser
-        , UrlParser.map Model.HomeRoute homeParser
+    oneOf
+        [ map Model.AddBrfRoute addBrfParser
+        , map Model.BrfListRoute brfListParser
+        , map Model.InfoRoute infoParser
+        , map Model.HomeRoute homeParser
         ]
 
 
-addBrfParser : UrlParser.Parser (Model.CodedBrfRecord -> a) a
+addBrfParser : Parser (Model.CodedBrfRecord -> a) a
 addBrfParser =
-    UrlParser.oneOf
-        [ UrlParser.s "add" </> UrlParser.string
-        , UrlParser.s "brfcheck" </> UrlParser.s "add" </> UrlParser.string
+    oneOf
+        [ s "add" </> string
+        , s "brfcheck" </> s "add" </> string
         ]
 
 
-brfListParser : UrlParser.Parser a a
+brfListParser : Parser a a
 brfListParser =
-    UrlParser.oneOf
-        [ UrlParser.s "list"
-        , UrlParser.s "brfcheck" </> UrlParser.s "list"
+    oneOf
+        [ s "list"
+        , s "brfcheck" </> s "list"
         ]
 
 
-infoParser : UrlParser.Parser a a
+infoParser : Parser a a
 infoParser =
-    UrlParser.oneOf
-        [ UrlParser.s "info"
-        , UrlParser.s "brfcheck" </> UrlParser.s "info"
+    oneOf
+        [ s "info"
+        , s "brfcheck" </> s "info"
         ]
 
 
-homeParser : UrlParser.Parser a a
+homeParser : Parser a a
 homeParser =
-    UrlParser.oneOf
-        [ UrlParser.s "index.html"
-        , UrlParser.s ""
-        , UrlParser.s "brfcheck"
+    oneOf
+        [ s "index.html"
+        , s ""
+        , s "brfcheck"
         ]
 
 

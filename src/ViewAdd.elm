@@ -5,7 +5,7 @@ import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick)
 import Model exposing (Model, Parameters)
 import Msg
-import Regex
+import StringUtil exposing (userReplace)
 
 
 addBrfFromUrl : Model -> String -> Html Msg.Msg
@@ -36,6 +36,6 @@ addBrfFromUrl model url =
 
 fromUri : String -> String
 fromUri code =
-    Regex.replace Regex.All (Regex.regex "\\+") (\_ -> "^") code
-        |> Regex.replace Regex.All (Regex.regex (Regex.escape "%20")) (\_ -> " ")
-        |> Regex.replace Regex.All (Regex.regex (Regex.escape ".:")) (\_ -> ",")
+    userReplace "\\+" (\_ -> "^") code
+        |> userReplace "%20" (\_ -> " ")
+        |> userReplace ".:" (\_ -> ",")
