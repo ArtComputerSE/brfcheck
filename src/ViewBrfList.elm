@@ -16,7 +16,7 @@ viewBrfList model =
     div []
         [ h1 [] [ text "Dina sparade objekt" ]
         , headers
-        , div [] (List.indexedMap (viewBrf model.location) model.saved)
+        , div [] (List.indexedMap (viewBrf (baseUrl model.location)) model.saved)
         ]
 
 
@@ -31,8 +31,8 @@ headers =
         ]
 
 
-viewBrf : Url.Url -> Int -> Parameters -> Html Msg.Msg
-viewBrf location index parameters =
+viewBrf : String -> Int -> Parameters -> Html Msg.Msg
+viewBrf url index parameters =
     div [ class "row" ]
         [ div [ class "cell clickable", onClick (Msg.SetCurrent index) ] [ text parameters.beteckning ]
         , div [ class "cell" ] [ text (parameters.lägenhetsyta ++ " kvm") ]
@@ -50,17 +50,18 @@ viewBrf location index parameters =
                     []
                 , span
                     [ class "hidden-span", id ("parameters" ++ String.fromInt index) ]
-                    [ text (toUri location (Model.parametersToString parameters)) ]
+                    [ text (url ++ encode (Model.parametersToString parameters)) ]
                 ]
             ]
         ]
 
 
-toUri : Url.Url -> String -> String
-toUri url code =
-    userReplace "list" (\_ -> "add/") (Url.toString url) ++ encode code
+baseUrl : Url.Url -> String
+baseUrl url =
+    Url.toString url |> userReplace "list" (\_ -> "?add=")
 
 
+encode : String -> String
 encode code =
     userReplace "\\^" (\_ -> "+") code
         |> userReplace " " (\_ -> "%20")

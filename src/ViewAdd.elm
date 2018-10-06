@@ -8,11 +8,16 @@ import Msg
 import StringUtil exposing (userReplace)
 
 
-addBrfFromUrl : Model -> String -> Html Msg.Msg
+addBrfFromUrl : Model -> Maybe String -> Html Msg.Msg
 addBrfFromUrl model url =
     let
         parameters =
-            Model.parametersFromString (fromUri url)
+            case url of
+                Nothing ->
+                    Model.defaultParameters
+
+                Just value ->
+                    Model.parametersFromString (fromUri value)
     in
     div []
         [ h1 []

@@ -7,7 +7,8 @@ import Html.Attributes exposing (class)
 import Model exposing (Model, Parameters, Route)
 import Msg exposing (Msg)
 import Url
-import Url.Parser exposing ((</>), Parser, int, map, oneOf, s, string)
+import Url.Parser exposing ((</>), (<?>), Parser, int, map, oneOf, s, string)
+import Url.Parser.Query
 import ViewAdd exposing (addBrfFromUrl)
 import ViewBrfList exposing (viewBrfList)
 import ViewCalculator exposing (viewCalculator)
@@ -197,11 +198,11 @@ routeParser =
         ]
 
 
-addBrfParser : Parser (Model.CodedBrfRecord -> a) a
+addBrfParser : Parser (Maybe String -> a) a
 addBrfParser =
     oneOf
-        [ s "add" </> string
-        , s "brfcheck" </> s "add" </> string
+        [ Url.Parser.top <?> Url.Parser.Query.string "add"
+        , s "brfcheck" <?> Url.Parser.Query.string "add"
         ]
 
 

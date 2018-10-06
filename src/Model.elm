@@ -120,5 +120,5 @@ type Route
     = HomeRoute
     | BrfListRoute
     | InfoRoute
-    | AddBrfRoute CodedBrfRecord
+    | AddBrfRoute (Maybe String)
     | NotFound
