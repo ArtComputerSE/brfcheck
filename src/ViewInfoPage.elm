@@ -39,8 +39,8 @@ viewInfo =
             [ text
                 ("Eftersom allt lagras i din webbläsare, så för att spara eller dela en BRF, behöver du kopiera den "
                     ++ "till urklipp och sedan klistra in den i en chatt eller ett mail. "
-                    ++ "I listan över BRF finns en blå symbol längst till höger, klicka på den och det blir en länk som "
-                    ++ "mottagaren kan klicka på.  "
+                    ++ "I listan över BRF finns en blå symbol längst till höger, klicka på den och det blir en länk i "
+                    ++ "urklipp. Klistra in den i ett mail eller en chatt för att dela med andra.  "
                     ++ "Observera att en del chatt-program är inte fullgoda webbläsare utan man behöver välja alternativ "
                     ++ "som \"Öppna i Chrome\" eller liknande."
                 )
@@ -54,7 +54,7 @@ viewInfo =
             ]
         , h2 [] [ text "Källkod" ]
         , p []
-            [ text "Källkoden finns öppet tillgänglig på GitHub. Appen är skriven i Elm. "
+            [ text "Källkoden finns öppet tillgänglig på GitHub. Appen är skriven i Elm 0.19. "
             , a [ href "https://github.com/ArtComputerSE/brfcheck", target "_blank" ]
                 [ text "Här hittar du källkoden." ]
             ]
