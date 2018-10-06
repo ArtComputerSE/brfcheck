@@ -4,7 +4,7 @@ import registerServiceWorker from './registerServiceWorker';
 import Clipboard from "./clipboard.js"
 
 var storedState = localStorage.getItem('model');
-var startingState = storedState ? JSON.parse(storedState) : null;
+var startingState = storedState ? JSON.parse(storedState) : "";
 
 const elmApp = Elm.Main.init({
     node: document.getElementById('root'),
@@ -18,4 +18,4 @@ elmApp.ports.setStorage.subscribe(function (state) {
 
 registerServiceWorker();
 
-var clipboard = new Clipboard('.copy-button')
+var clipboard = new Clipboard('.copy-button');
