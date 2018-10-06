@@ -1,6 +1,8 @@
 module Msg exposing (Msg(..))
 
+import Browser
 import Model exposing (Parameters, Route)
+import Url
 
 
 type Msg
@@ -14,7 +16,8 @@ type Msg
     | SetCurrent Int
     | RemoveObject Int
     | AddObject Parameters
-    | FollowRoute Route
+    | LinkClicked Browser.UrlRequest
+    | UrlChanged Url.Url
     | GotoHomePage
     | GotoBrfListPage
     | GotoInfoPage

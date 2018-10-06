@@ -1,20 +1,20 @@
 import './main.css';
-import { Main } from './Main.elm';
+import {Elm} from './Main.elm';
 import registerServiceWorker from './registerServiceWorker';
 import Clipboard from "./clipboard.js"
 
 var storedState = localStorage.getItem('model');
 var startingState = storedState ? JSON.parse(storedState) : null;
 
-var elmApp = Main.embed(document.getElementById('root'), startingState);
+const elmApp = Elm.Main.init({
+    node: document.getElementById('root'),
+    flags: startingState
+});
 
-elmApp.ports.setStorage.subscribe(function(state) {
+elmApp.ports.setStorage.subscribe(function (state) {
     localStorage.setItem('model', JSON.stringify(state));
 });
 
-elmApp.ports.removeStorage.subscribe(function() {
-    localStorage.removeItem('model');
-});
 
 registerServiceWorker();
 

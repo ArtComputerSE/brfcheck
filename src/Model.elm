@@ -1,6 +1,6 @@
 module Model exposing (CodedBrfRecord, Model, Parameters, Route(..), defaultParameters, parameterListSplitter, parameterSplitter, parametersFromString, parametersToString, pick, restore, store)
 
-import Browser.Navigation
+import Browser.Navigation as Navigation
 import Url
 
 
@@ -12,6 +12,7 @@ type alias Model =
     { route : Route
     , parameters : Parameters
     , saved : List Parameters
+    , key : Navigation.Key
     , location : Url.Url
     }
 
@@ -49,10 +50,9 @@ restore encoded =
 store : Parameters -> List Parameters -> String
 store current list =
     let
-        x =
-            Debug.log "Store "
-                (Debug.toString list)
-
+        --        x =
+        --            Debug.log "Store "
+        --                (Debug.toString list)
         saved =
             Maybe.withDefault [] (List.tail list)
     in
@@ -94,10 +94,10 @@ pick n def list =
 
 parametersToString : Parameters -> String
 parametersToString parameters =
-    let
-        p =
-            Debug.log "Parameters to String" parameters
-    in
+    --    let
+    --        p =
+    --            Debug.log "Parameters to String" parameters
+    --    in
     String.join parameterSplitter
         [ parameters.eget_kapital
         , parameters.långfristiga_skulder

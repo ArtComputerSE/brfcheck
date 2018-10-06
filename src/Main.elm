@@ -1,4 +1,4 @@
-port module Main exposing (addBrfParser, addObjectAndGoToList, brfListParser, homeParser, infoParser, init, initialModel, main, notFoundPage, removeFromList, removeStorage, routeParser, setCurrent, setStorage, subscriptions, update, updateWithStorage, urlFromRoute, view, viewPage)
+port module Main exposing (addBrfParser, addObjectAndGoToList, brfListParser, homeParser, infoParser, init, initialModel, main, notFoundPage, removeFromList, routeParser, setCurrent, setStorage, subscriptions, update, updateWithStorage, urlFromRoute, view, viewPage)
 
 import Browser
 import Browser.Navigation as Navigation
@@ -15,12 +15,12 @@ import ViewHeader exposing (viewHeader)
 import ViewInfoPage exposing (viewInfo)
 
 
-main : Program Navigation.Key Model Msg
+main : Program String Model Msg
 main =
     Browser.application
         { init = init
-        , onUrlChange = onUrlChange
-        , onUrlRequest = onUrlRequest
+        , onUrlChange = Msg.UrlChanged
+        , onUrlRequest = Msg.LinkClicked
         , view = view
         , update = updateWithStorage
         , subscriptions = subscriptions
@@ -34,11 +34,8 @@ main =
 port setStorage : String -> Cmd msg
 
 
-port removeStorage : String -> Cmd msg
-
-
-initialModel : Url.Url -> List Parameters -> Model
-initialModel location parameters =
+initialModel : Url.Url -> Navigation.Key -> List Parameters -> Model
+initialModel location key parameters =
     let
         p =
             Debug.log "Parameters " (Debug.toString parameters)
@@ -52,27 +49,18 @@ initialModel location parameters =
     { route = route
     , parameters = current
     , saved = parameters
+    , key = key
     , location = location
     }
 
 
-init : Navigation.Key -> Url.Url -> flags -> ( model, Cmd msg )
-init key url flags =
+init : String -> Url.Url -> Navigation.Key -> ( Model, Cmd msg )
+init flags url key =
     let
         l =
             Debug.log "init location" (Url.toString url)
     in
-    initialModel url ( Model.restore flags, Cmd.none )
-
-
-onUrlChange : Url.Url -> msg
-onUrlChange url =
-    Debug.log url
-
-
-onUrlRequest : Browser.UrlRequest -> msg
-onUrlRequest urlRequest =
-    Debug.log urlRequest
+    ( initialModel url key (Model.restore flags), Cmd.none )
 
 
 
@@ -122,25 +110,37 @@ update msg model =
             ( { model | saved = params :: model.saved }, Cmd.none )
 
         Msg.SetCurrent index ->
-            ( setCurrent index model, Navigation.pushUrl (urlFromRoute Model.HomeRoute) )
+            ( setCurrent index model, Navigation.pushUrl model.key (urlFromRoute Model.HomeRoute) )
 
         Msg.RemoveObject index ->
             ( { model | saved = removeFromList index model.saved }, Cmd.none )
 
         Msg.AddObject parameters ->
-            ( { model | saved = parameters :: model.saved }, Navigation.pushUrl (urlFromRoute Model.BrfListRoute) )
+            ( { model | saved = parameters :: model.saved }, Navigation.pushUrl model.key (urlFromRoute Model.BrfListRoute) )
 
-        Msg.FollowRoute route ->
-            ( { model | route = route }, Cmd.none )
+        Msg.LinkClicked urlRequest ->
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model
+                    , Navigation.pushUrl model.key (Url.toString url)
+                    )
+
+                Browser.External href ->
+                    ( model
+                    , Navigation.load href
+                    )
+
+        Msg.UrlChanged url ->
+            urlParser url model
 
         Msg.GotoHomePage ->
-            ( model, Navigation.pushUrl (urlFromRoute Model.HomeRoute) )
+            ( model, Navigation.pushUrl model.key (urlFromRoute Model.HomeRoute) )
 
         Msg.GotoBrfListPage ->
-            ( model, Navigation.pushUrl (urlFromRoute Model.BrfListRoute) )
+            ( model, Navigation.pushUrl model.key (urlFromRoute Model.BrfListRoute) )
 
         Msg.GotoInfoPage ->
-            ( model, Navigation.pushUrl (urlFromRoute Model.InfoRoute) )
+            ( model, Navigation.pushUrl model.key (urlFromRoute Model.InfoRoute) )
 
 
 setCurrent : Int -> Model -> Model
@@ -152,7 +152,7 @@ setCurrent index model =
         newSaved =
             removeFromList index model.saved
     in
-    Model Model.HomeRoute newCurrent (newCurrent :: newSaved) model.location
+    Model Model.HomeRoute newCurrent (newCurrent :: newSaved) model.key model.location
 
 
 removeFromList : Int -> List a -> List a
@@ -162,28 +162,28 @@ removeFromList index list =
 
 addObjectAndGoToList : Model -> Parameters -> Model
 addObjectAndGoToList model parameters =
-    Model Model.BrfListRoute parameters (parameters :: model.saved) model.location
+    Model Model.BrfListRoute parameters (parameters :: model.saved) model.key model.location
 
 
 
 -- PARSING
-{-
-   urlParser : Url.Url -> Msg
-   urlParser location =
-       let
-           l =
-               Debug.log "location" (Url.toString location)
 
-           parsed =
-               Parser.parsePath routeParser location
-       in
-       case Debug.log "parsed" parsed of
-           Nothing ->
-               Msg.FollowRoute Model.NotFound
 
-           Just route ->
-               Msg.FollowRoute route
--}
+urlParser : Url.Url -> Model -> ( Model, Cmd Msg )
+urlParser location model =
+    let
+        l =
+            Debug.log "location" (Url.toString location)
+
+        parsed =
+            Url.Parser.parse routeParser location
+    in
+    case Debug.log "parsed" parsed of
+        Nothing ->
+            ( { model | route = Model.NotFound }, Cmd.none )
+
+        Just route ->
+            ( { model | route = route }, Cmd.none )
 
 
 routeParser : Parser (Route -> a) a
@@ -193,6 +193,7 @@ routeParser =
         , map Model.BrfListRoute brfListParser
         , map Model.InfoRoute infoParser
         , map Model.HomeRoute homeParser
+        , map Model.HomeRoute Url.Parser.top
         ]
 
 
@@ -254,10 +255,14 @@ urlFromRoute route =
 
 view : Model -> Browser.Document Msg
 view model =
-    div [ class "container" ]
-        [ viewHeader
-        , viewPage model
+    { title = "BRF check"
+    , body =
+        [ div [ class "container" ]
+            [ viewHeader
+            , viewPage model
+            ]
         ]
+    }
 
 
 viewPage : Model -> Html Msg
