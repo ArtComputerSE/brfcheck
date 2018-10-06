@@ -62,9 +62,11 @@ viewBrf location index parameters =
 
 
 toUri : Url.Url -> String -> String
-toUri location code =
-    Url.toString location
-        ++ "%PUBLIC_URL%/add/"
-        ++ userReplace "\\^" (\_ -> "+") code
+toUri url code =
+    userReplace "list" (\_ -> "add/") (Url.toString url) ++ encode code
+
+
+encode code =
+    userReplace "\\^" (\_ -> "+") code
         |> userReplace " " (\_ -> "%20")
         |> userReplace "," (\_ -> ".:")
