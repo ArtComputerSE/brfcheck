@@ -1,4 +1,4 @@
-module ViewBrfList exposing (headers, toUri, vb, viewBrf, viewBrfList)
+module ViewBrfList exposing (viewBrfList)
 
 import Browser.Navigation
 import Html exposing (Html, div, h1, img, p, span, text)
@@ -16,7 +16,7 @@ viewBrfList model =
     div []
         [ h1 [] [ text "Dina sparade objekt" ]
         , headers
-        , div [] (List.indexedMap (vb model.location) model.saved)
+        , div [] (List.indexedMap (viewBrf model.location) model.saved)
         ]
 
 
@@ -29,11 +29,6 @@ headers =
         , div [ class "cell" ] [ text "Ta bort" ]
         , div [ class "cell" ] [ text "Urklipp" ]
         ]
-
-
-vb : Url.Url -> Int -> Parameters -> Html Msg.Msg
-vb location =
-    viewBrf location
 
 
 viewBrf : Url.Url -> Int -> Parameters -> Html Msg.Msg
