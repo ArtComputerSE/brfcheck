@@ -58,7 +58,7 @@ viewBrf url index parameters =
 
 baseUrl : Url.Url -> String
 baseUrl url =
-    Url.toString url |> userReplace "list" (\_ -> "?add=")
+    Url.toString url |> userReplace "list" (\_ -> "brfcheck/?object=")
 
 
 encode : String -> String

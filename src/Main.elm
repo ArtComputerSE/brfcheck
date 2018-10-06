@@ -200,10 +200,7 @@ routeParser =
 
 addBrfParser : Parser (Maybe String -> a) a
 addBrfParser =
-    oneOf
-        [ Url.Parser.top <?> Url.Parser.Query.string "add"
-        , s "brfcheck" <?> Url.Parser.Query.string "add"
-        ]
+    s "brfcheck" <?> Url.Parser.Query.string "object"
 
 
 brfListParser : Parser a a

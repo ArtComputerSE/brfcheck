@@ -94,10 +94,10 @@ pick n def list =
 
 parametersToString : Parameters -> String
 parametersToString parameters =
-    --    let
-    --        p =
-    --            Debug.log "Parameters to String" parameters
-    --    in
+    let
+        p =
+            Debug.log "Parameters to String" parameters
+    in
     String.join parameterSplitter
         [ parameters.eget_kapital
         , parameters.långfristiga_skulder
