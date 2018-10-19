@@ -190,33 +190,27 @@ urlParser location model =
 routeParser : Parser (Route -> a) a
 routeParser =
     oneOf
-        [ map Model.AddBrfRoute addBrfParser
-        , map Model.BrfListRoute brfListParser
+        [ map Model.BrfListRoute brfListParser
         , map Model.InfoRoute infoParser
         , map Model.HomeRoute homeParser
+        , map Model.AddBrfRoute addBrfParser
         , map Model.HomeRoute Url.Parser.top
         ]
 
 
 addBrfParser : Parser (Maybe String -> a) a
 addBrfParser =
-    s "brfcheck" <?> Url.Parser.Query.string "object"
+    s "brfcheck" <?> Url.Parser.Query.string "objekt"
 
 
 brfListParser : Parser a a
 brfListParser =
-    oneOf
-        [ s "list"
-        , s "brfcheck" </> s "list"
-        ]
+    s "brfcheck" </> s "list"
 
 
 infoParser : Parser a a
 infoParser =
-    oneOf
-        [ s "info"
-        , s "brfcheck" </> s "info"
-        ]
+    s "brfcheck" </> s "info"
 
 
 homeParser : Parser a a
@@ -230,21 +224,25 @@ homeParser =
 
 urlFromRoute : Route -> String
 urlFromRoute route =
-    case route of
-        Model.HomeRoute ->
-            "%PUBLIC_URL%/"
+    let
+        result =
+            case route of
+                Model.HomeRoute ->
+                    "/brfcheck"
 
-        Model.BrfListRoute ->
-            "%PUBLIC_URL%/list"
+                Model.BrfListRoute ->
+                    "/brfcheck/list"
 
-        Model.InfoRoute ->
-            "%PUBLIC_URL%/info"
+                Model.InfoRoute ->
+                    "/brfcheck/info"
 
-        Model.AddBrfRoute _ ->
-            "%PUBLIC_URL%/add"
+                Model.AddBrfRoute _ ->
+                    "add"
 
-        Model.NotFound ->
-            "%PUBLIC_URL%/notfound"
+                Model.NotFound ->
+                    "notfound"
+    in
+    Debug.log "urlFromRoute: " result
 
 
 

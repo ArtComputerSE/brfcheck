@@ -18,6 +18,9 @@ addBrfFromUrl model url =
 
                 Just value ->
                     Model.parametersFromString (fromUri value)
+
+        x =
+            Debug.log "addBrfFromUrl: " parameters
     in
     div []
         [ h1 []
